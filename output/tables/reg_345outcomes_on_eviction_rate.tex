@@ -1,0 +1,23 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}           &\multicolumn{1}{c}{(2)}           &\multicolumn{1}{c}{(3)}           &\multicolumn{1}{c}{(4)}           &\multicolumn{1}{c}{(5)}           &\multicolumn{1}{c}{(6)}           \\
+            &\multicolumn{1}{c}{read3rdgrade}  &\multicolumn{1}{c}{math3rdgrade}  &\multicolumn{1}{c}{read4thgrade}  &\multicolumn{1}{c}{math4thgrade}  &\multicolumn{1}{c}{read5thgrade}  &\multicolumn{1}{c}{math5thgrade}  \\
+            &                     b/se         &                     b/se         &                     b/se         &                     b/se         &                     b/se         &                     b/se         \\
+\hline
+evictionrate&                   -0.885         &                   -9.738         &                   -3.831         &                   -6.345         &                   -8.835         &                   -3.703         \\
+            &                   (1.68)         &                   (7.56)         &                   (3.95)         &                   (5.37)         &                   (6.71)         &                   (4.88)         \\
+pctwhite    &                   -0.165         &                   -0.235         &                   -0.262         &                   -0.088         &                   -0.226         &                   -0.348         \\
+            &                   (0.12)         &                   (0.46)         &                   (0.25)         &                   (0.34)         &                   (0.41)         &                   (0.30)         \\
+pctrenteroccupied&                    0.258\sym{***}&                   -0.345         &                    0.070         &                   -0.120         &                   -0.289         &                    0.503\sym{***}\\
+            &                   (0.06)         &                   (0.22)         &                   (0.09)         &                   (0.14)         &                   (0.18)         &                   (0.14)         \\
+povertyrate &                    0.190         &                    0.599         &                    0.324         &                    0.356         &                    0.674         &                    0.572         \\
+            &                   (0.14)         &                   (0.56)         &                   (0.29)         &                   (0.40)         &                   (0.51)         &                   (0.40)         \\
+\_cons      &                   90.093\sym{***}&                  136.926\sym{*}  &                  112.859\sym{***}&                  107.497\sym{**} &                  125.956\sym{*}  &                   87.180\sym{*}  \\
+            &                  (14.05)         &                  (56.57)         &                  (30.63)         &                  (40.65)         &                  (50.04)         &                  (36.35)         \\
+\hline
+\(N\)       &                     1497         &                     1497         &                     1497         &                     1497         &                     1497         &                     1497         \\
+\hline\hline
+\end{tabular}
+}

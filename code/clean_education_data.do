@@ -10,7 +10,7 @@ Cleans Ohio education data.
 local school_years 0506 0607 0708 0809 0910 1011 1112 1213 1314 1415
 
 // variables to keep in all datasets
-local to_keep DistrictIRN DistrictName County CityandZipcode Enrollment
+local to_keep DistrictIRN DistrictName  Enrollment
 
 // variables to drop in some datasets but not all
 local to_drop_specific *Attendance* *EndofCourse* *Absent* *Science* *SocialStudies* *Writ* *PerformanceIndexScore* *OGT* *11th*
@@ -85,15 +85,45 @@ local stubs math3rdgrade math4thgrade math5thgrade math6thgrade math7thgrade
 #delimit cr
 reshape long `stubs', i(districtirn) j(year)
 
-// separate cityandzipcode variables
-split cityandzipcode, parse("  ")  // first split on double space
-drop cityandzipcode  // drop original variable
-rename cityandzipcode1 city_state // contains "City, State"
-rename cityandzipcode2 zipcode  // contains zip code
-split city_state, parse(", ")  // split "City, Ohio" to "City" and "Ohio"
-rename city_state1 city  // gives name of city
-drop city_state2  // always equal to "Ohio"
-drop city_state 
 
-//
+// replace integers representing the year with the actual year (i.e., 6 --> )
+forvalues i=6(1)9 {
+  replace year = 200`i' if year == `i'
+}
+forvalues i=10(1)15 {
+  replace year = 20`i' if year == `i'
+}
+
+// (4) convert numbers stored as strings to numerics
+#delimit ;
+local to_destring read3rdgrade math3rdgrade read4thgrade math4thgrade
+                  read5thgrade math5thgrade read6thgrade math6thgrade
+                  read7thgrade math7thgrade read8thgrade math8thgrade
+                  enrollment;
+#delimit cr
+
+// some observations contain "NC" instead of number
+destring `to_destring', replace force
+foreach var of varlist `to_destring'{
+  drop if  `var' == .
+}
+
+// understand which missing values were dropped
+bysort districtirn year: generate year_in_sample = _n
+egen max_year_in_sample = max(year_in_sample), by(districtirn)
+tab max_year_in_sample
+/*
+    max_year_in_sample |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          9 |         72        1.21        1.21
+         10 |      5,900       98.79      100.00
+------------+-----------------------------------
+      Total |      5,972      100.00
+
+      there are 8 schools which are only observed for 9 years
+      otherwise, panel balanced
+*/
+drop max_year_in_sample
+drop year_in_sample
+
 save "${cleaned_data}/cleaned_education_data.dta", replace
