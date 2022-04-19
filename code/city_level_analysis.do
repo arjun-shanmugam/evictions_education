@@ -19,29 +19,38 @@ local outcome_variables_678 read6thgrade math6thgrade read7thgrade math7thgrade
 #delimit cr
 local controls pctwhite pctrenteroccupied povertyrate
 
+
+
+
+eststo: quietly xtreg evictionrate CANO `controls', fe vce(cluster fips)
+eststo: quietly xtreg evictionfilingrate CANO `controls', fe vce(cluster fips)
+esttab using ${output_tables}/first_stage.tex, style(tex) cells(b(star fmt(3)) se(par fmt(2))) replace modelwidth(25)
+
+
+// MAIN REGRESSIONS
 eststo clear
 // independent variable of interest: eviction rate
 foreach var of varlist `outcome_variables_345' {
-  eststo: quietly xtivreg `var' (evictionrate=CANO) `controls', fe vce(robust)
+  eststo: quietly xtivreg `var' (evictionrate=CANO) `controls', fe vce(cluster fips)
 }
 esttab using ${output_tables}/reg_345outcomes_on_eviction_rate.tex, style(tex) cells(b(star fmt(3)) se(par fmt(2))) replace modelwidth(25)
 
 eststo clear
 foreach var of varlist `outcome_variables_678' {
-  eststo: quietly xtivreg `var' (evictionrate=CANO) `controls', fe vce(robust)
+  eststo: quietly xtivreg `var' (evictionrate=CANO) `controls', fe vce(cluster fips)
 }
 esttab using ${output_tables}/reg_678outcomes_on_eviction_rate.tex, style(tex) cells(b(star fmt(3)) se(par fmt(2))) replace modelwidth(25)
 
 eststo clear
 // independent variable of interest: eviction filing rate
 foreach var of varlist `outcome_variables_345' {
-  eststo: quietly xtivreg `var' (evictionfilingrate=CANO) `controls', fe vce(robust)
+  eststo: quietly xtivreg `var' (evictionfilingrate=CANO) `controls', fe vce(cluster fips)
 }
 esttab using ${output_tables}/reg_345outcomes_on_filing_rate.tex, style(tex) cells(b(star fmt(3)) se(par fmt(2))) replace modelwidth(25)
 
 eststo clear
 // independent variable of interest: eviction filing rate
 foreach var of varlist `outcome_variables_678' {
-  eststo: quietly xtivreg `var' (evictionfilingrate=CANO) `controls', fe vce(robust)
+  eststo: quietly xtivreg `var' (evictionfilingrate=CANO) `controls', fe vce(cluster fips)
 }
 esttab using ${output_tables}/reg_678outcomes_on_filing_rate.tex, style(tex) cells(b(star fmt(3)) se(par fmt(2))) replace modelwidth(25)

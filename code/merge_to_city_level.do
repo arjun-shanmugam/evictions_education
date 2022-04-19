@@ -11,7 +11,11 @@ Merges all cleaned data to create dataset used for analysis.
 // education data currently identified using Ohio District IRN numbers
 // match each District IRN number with a LEA ID from NCES
 use ${cleaned_data}/cleaned_education_data.dta, replace
-merge m:1 districtirn using ${cleaned_data}/cleaned_ohioid_leaid_crosswalk.dta
+
+// temporarily reshape to wide so that we have 1 row for each district
+reshape wide
+
+merge 1:1 districtirn using ${cleaned_data}/cleaned_ohioid_leaid_crosswalk.dta
 /*
 Result                      Number of obs
 -----------------------------------------
@@ -23,7 +27,7 @@ Matched                             6,060  (_merge==3)
 -----------------------------------------
 
 _merge==1:
-  These 20 observations are 20 years of data on Ledgemont school district and
+  These 20 observations are Ledgemont school district and
   Newbury Local School Districts. Both of these school districts are present in
   master but not in using because they have been disbanded. I drop them from the sample.
 
@@ -44,8 +48,8 @@ tab DistrictName
 
 
 // (2) Merge with city FIPS
-// every row is now identified by a LEA ID; match each to a FIPS code
-merge m:1 leaid using ${cleaned_data}/cleaned_leaid_fips_crosswalk.dta
+// every row is now identified by a LEA ID; match each to one or more FIPS codes
+merge 1:m leaid using ${cleaned_data}/cleaned_leaid_fips_crosswalk.dta
 /*
     Result                      Number of obs
     -----------------------------------------
@@ -56,7 +60,7 @@ merge m:1 leaid using ${cleaned_data}/cleaned_leaid_fips_crosswalk.dta
     Matched                             5,980  (_merge==3)
     -----------------------------------------
     _merge == 1
-      There are 80 observations corresponding to 8 districts which are not
+      There are 8 observations corresponding to 8 districts which are not
       located within a Census-designated place. I drop these from my analysis
     _merge == 2
       Three districts (Kelley's Island, Put-in-Bay, and College Corner) have
@@ -67,9 +71,16 @@ drop if _merge != 3
 drop _merge
 destring fips, replace  // so that we can merge with Kroeger and La Mattina
 
+// reshape back to long so that we can collapse to city-year level weighted by enrollment
+// #delimit ;
+local stubs math3rdgrade math4thgrade math5thgrade math6thgrade math7thgrade ///
+            math8thgrade read3rdgrade read4thgrade read5thgrade read6thgrade ///
+            read7thgrade read8thgrade enrollment //;
+// #delimit cr
+reshape long `stubs', i(districtirn fips) j(year)
 
 // // (3) Collapse to city-year level and merge with evictions data
-drop DistrictName Type districtirn districtname leaid
+drop DistrictName Type districtirn leaid
 #delimit ;
 local to_collapse read3rdgrade math3rdgrade read4thgrade math4thgrade
                   read5thgrade math5thgrade read6thgrade math6thgrade
@@ -84,15 +95,20 @@ merge 1:1 fips year using ${cleaned_data}/cleaned_kroeger_la_mattina.dta
 Matching result from |
                merge |      Freq.     Percent        Cum.
 ------------------------+-----------------------------------
-     Master only (1) |      3,757       48.80       48.80
-      Using only (2) |      2,336       30.34       79.14
-         Matched (3) |      1,606       20.86      100.00
+     Master only (1) |     10,153       72.03       72.03
+      Using only (2) |      1,486       10.54       82.58
+         Matched (3) |      2,456       17.42      100.00
 ------------------------+-----------------------------------
-               Total |      7,699      100.00
+               Total |     14,095      100.00
+
+Master only (1): Mainly small villages and census designated places that Kroeger
+                 and La Mattina do not have data on.
+Using only (2): Years for which Kroger and La Mattina have data but during which
+                which I do not have education data.
 
 */
 br kroeger_cityname nces_cityname fips year if _merge == 1 & year > 2005 & year < 2016
-br kroeger_cityname nces_cityname fips year if _merge == 2 & year > 2005 & year < 2016
+br kroeger_cityname nces_cityname fips year if _merge == 2 & year > 2005 & year < 2016 // no observations
 br kroeger_cityname nces_cityname fips year if _merge == 3 & year > 2005 & year < 2016
 
 // drop unmerged observations
@@ -104,6 +120,6 @@ drop nces_cityname
 rename kroeger_cityname cityname
 
 // set panelvar and timevar
-xtset fips year   
+xtset fips year
 
 save ${cleaned_data}/final_city_level_dataset.dta, replace

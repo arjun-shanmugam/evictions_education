@@ -69,9 +69,6 @@ ts_spanned_ |
 keep leaid place name_place21
 rename place fips
 
-// we need to make sure there is one row for each leaid
-bysort leaid: generate num = _n
-drop if num > 1
-drop num
+
 
 save ${cleaned_data}/cleaned_leaid_fips_crosswalk.dta, replace

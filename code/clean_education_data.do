@@ -10,7 +10,7 @@ Cleans Ohio education data.
 local school_years 0506 0607 0708 0809 0910 1011 1112 1213 1314 1415
 
 // variables to keep in all datasets
-local to_keep DistrictIRN DistrictName  Enrollment
+local to_keep DistrictIRN  Enrollment
 
 // variables to drop in some datasets but not all
 local to_drop_specific *Attendance* *EndofCourse* *Absent* *Science* *SocialStudies* *Writ* *PerformanceIndexScore* *OGT* *11th*
