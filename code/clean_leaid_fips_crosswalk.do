@@ -7,7 +7,7 @@ Cleans NCES's LEA ID to FIPS place code crosswalk.
 /**********************************************************************/
 
 #delimit ;
-import excel ${leaid_fips_place_crosswalk}, sheet("grf21_lea_place")
+import excel ${leaid_fips_place_crosswalk}, sheet("grf19_lea_place")
                                             firstrow
                                             case(lower)
                                             allstring
@@ -66,7 +66,7 @@ ts_spanned_ |
 ------------+-----------------------------------
       Total |      1,734      100.00
 */
-keep leaid place name_place21
+keep leaid place name_place19
 rename place fips
 
 

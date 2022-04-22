@@ -7,7 +7,7 @@ Cleans NCES's LEA ID to census tract fips code crosswalk.
 /**********************************************************************/
 
 #delimit ;
-import excel ${leaid_tract_crosswalk}, sheet("grf21_lea_tract")
+import excel ${leaid_tract_crosswalk}, sheet("grf19_lea_tract")
                                             firstrow
                                             case(lower)
                                             allstring

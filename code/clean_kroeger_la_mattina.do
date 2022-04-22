@@ -15,4 +15,5 @@ rename place_fips fips
 // to keep track of where this name variable came from
 rename cityname kroeger_cityname
 
+
 save ${cleaned_data}/cleaned_kroeger_la_mattina.dta, replace
