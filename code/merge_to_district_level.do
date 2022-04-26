@@ -70,9 +70,8 @@ destring tract_fips, replace  // save FIPS as numeric
 // Merge with evictions data (3)
 // reshape back to long so that we can merge on FIPS and year with evictions
 #delimit ;
-local stubs math3rdgrade math4thgrade math5thgrade math6thgrade math7thgrade
-            math8thgrade read3rdgrade read4thgrade read5thgrade read6thgrade
-            read7thgrade read8thgrade enrollment;
+local stubs read3_ math3_ read4_ math4_ read5_ math5_ read6_ math6_ read7_ math7_ read8_
+            math8_ enrollment_;
 #delimit cr
 reshape long `stubs', i(leaid tract_fips) j(year)
 
@@ -179,10 +178,10 @@ drop population num_districts_spanned_by_tract
 
 // unweighted collapse enrollment, testing variables
 #delimit ;
-local to_collapse_unweighted math3rdgrade math4thgrade math5thgrade math6thgrade
-                             math7thgrade math8thgrade read3rdgrade read4thgrade
-                             read5thgrade read6thgrade read7thgrade read8thgrade
-                             enrollment evictions evictionfilings;
+local to_collapse_unweighted math3_ math4_ math5_ math6_
+                             math7_ math8_ read3_ read4_
+                             read5_ read6_ read7_ read8_
+                             enrollment_ evictions evictionfilings;
 
 
 // weighted collapse demographic, nuisance ordinance eviction variables
@@ -217,6 +216,7 @@ merge 1:1 leaid DistrictName year using ${cleaned_data}/temp.dta
 drop _merge
 
 destring leaid, replace
-xtset leaid year
+rename *_ *
+reshape long math read, i(leaid year) j(grade)
 
 save ${cleaned_data}/final_district_level_dataset.dta, replace

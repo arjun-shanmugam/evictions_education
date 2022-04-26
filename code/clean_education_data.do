@@ -65,25 +65,55 @@ rename reading7thgrade201415ato read7thgrade201415atora
 rename reading8thgrade201415ato read8thgrade201415atora
 
 // edit variable endings to only include spring term of each school year
-rename *200506* *6
-rename *200607* *7
-rename *200708* *8
-rename *200809* *9
-rename *200910* *10
-rename *201011* *11
-rename *201112* *12
-rename *201213* *13
-rename *201314* *14
-rename *201415* *15
+rename *rdgrade200506* *_6
+rename *thgrade200506* *_6
+rename *200506* *_6
+
+rename *rdgrade200607* *_7
+rename *thgrade200607* *_7
+rename *200607* *_7
+
+rename *rdgrade200708* *_8
+rename *thgrade200708* *_8
+rename *200708* *_8
+
+
+rename *rdgrade200809* *_9
+rename *thgrade200809* *_9
+rename *200809* *_9
+
+rename *rdgrade200910* *_10
+rename *thgrade200910* *_10
+rename *200910* *_10
+
+rename *rdgrade201011* *_11
+rename *thgrade201011* *_11
+rename *201011* *_11
+
+rename *rdgrade201112* *_12
+rename *thgrade201112* *_12
+rename *201112* *_12
+
+rename *rdgrade201213* *_13
+rename *thgrade201213* *_13
+rename *201213* *_13
+
+rename *rdgrade201314* *_14
+rename *thgrade201314* *_14
+rename *201314* *_14
+
+rename *rdgrade201415* *_15
+rename *thgrade201415* *_15
+rename *201415* *_15
 
 
 // reshape each variable
 #delimit ;
-local stubs math3rdgrade math4thgrade math5thgrade math6thgrade math7thgrade
-            math8thgrade read3rdgrade read4thgrade read5thgrade read6thgrade
-            read7thgrade read8thgrade enrollment;
+local stubs read3_ math3_ read4_ math4_ read5_ math5_ read6_ math6_ read7_ math7_ read8_
+            math8_ enrollment_;
 #delimit cr
 reshape long `stubs', i(districtirn) j(year)
+
 
 
 // replace integers representing the year with the actual year (i.e., 6 --> )
@@ -96,9 +126,9 @@ forvalues i=10(1)15 {
 
 // (4) convert numbers stored as strings to numerics
 #delimit ;
-local to_destring read3rdgrade math3rdgrade read4thgrade math4thgrade
-                  read5thgrade math5thgrade read6thgrade math6thgrade
-                  read7thgrade math7thgrade read8thgrade math8thgrade
+local to_destring read3 math3 read4 math4
+                  read5 math5 read6 math6
+                  read7 math7 read8 math8
                   enrollment;
 #delimit cr
 
@@ -125,5 +155,7 @@ tab max_year_in_sample
 */
 drop max_year_in_sample
 drop year_in_sample
+
+
 
 save "${cleaned_data}/cleaned_education_data.dta", replace

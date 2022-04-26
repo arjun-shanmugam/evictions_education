@@ -1,0 +1,21 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{OLS and Instrumental Variable Regressions}
+\begin{tabular}{l*{5}{c}}
+\hline\hline
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}\\
+                    &Eviction rate&Eviction rate&Eviction Rate&Eviction Rate&Eviction Rate\\
+                    &        b/se&        b/se&        b/se&        b/se&        b/se\\
+\hline
+Eviction rate       &      -0.325&      -5.017&      -2.974&      -0.316&      -0.316\\
+                    &      (0.07)&      (3.07)&      (1.36)&      (0.91)&      (0.91)\\
+\hline
+Observations        &       59724&       59724&       59724&       59724&       59724\\
+Number of clusters  &        1103&        1103&        1103&        1103&        1103\\
+Socioeconomic controls&         Yes&         Yes&         Yes&         Yes&         Yes\\
+Place F.E.          &          No&          No&         Yes&         Yes&         Yes\\
+Year F.E.           &          No&          No&          No&         Yes&         Yes\\
+Grade F.E.          &          No&          No&          No&          No&         Yes\\
+\hline\hline
+\end{tabular}
+\end{table}

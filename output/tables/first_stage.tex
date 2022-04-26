@@ -1,25 +1,17 @@
 {
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
-\begin{tabular}{l*{8}{c}}
+\begin{tabular}{l*{3}{c}}
 \hline\hline
-            &\multicolumn{1}{c}{(1)}           &\multicolumn{1}{c}{(2)}           &\multicolumn{1}{c}{(3)}           &\multicolumn{1}{c}{(4)}           &\multicolumn{1}{c}{(5)}           &\multicolumn{1}{c}{(6)}           &\multicolumn{1}{c}{(7)}           &\multicolumn{1}{c}{(8)}           \\
-            &\multicolumn{1}{c}{read6thgrade}  &\multicolumn{1}{c}{math6thgrade}  &\multicolumn{1}{c}{read7thgrade}  &\multicolumn{1}{c}{math7thgrade}  &\multicolumn{1}{c}{read8thgrade}  &\multicolumn{1}{c}{math8thgrade}  &\multicolumn{1}{c}{evictionrate}  &\multicolumn{1}{c}{evictionfilingrate}\\
-            &                     b/se         &                     b/se         &                     b/se         &                     b/se         &                     b/se         &                     b/se         &                     b/se         &                     b/se         \\
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
+                    &(1) Eviction rate&(2) Eviction rate&(3) Eviction Rate\\
+                    &        b/se&        b/se&        b/se\\
 \hline
-evictionfilingrate&                   -9.411         &                   -4.806         &                   -5.682         &                   -1.154         &                   -5.210         &                   -8.100         &                                  &                                  \\
-            &                   (8.12)         &                   (4.63)         &                   (4.95)         &                   (2.49)         &                   (4.57)         &                   (7.66)         &                                  &                                  \\
-pctwhite    &                   -0.354         &                   -0.202         &                   -0.126         &                   -0.102         &                   -0.420         &                   -0.264         &                   -0.042\sym{*}  &                   -0.030         \\
-            &                   (0.44)         &                   (0.24)         &                   (0.26)         &                   (0.12)         &                   (0.26)         &                   (0.39)         &                   (0.02)         &                   (0.04)         \\
-pctrenteroccupied&                   -0.309         &                   -0.127         &                   -0.239         &                    0.132         &                    0.115         &                   -0.250         &                   -0.008         &                   -0.043         \\
-            &                   (0.41)         &                   (0.22)         &                   (0.25)         &                   (0.12)         &                   (0.23)         &                   (0.38)         &                   (0.02)         &                   (0.03)         \\
-povertyrate &                    0.451         &                    0.195         &                    0.273         &                    0.061         &                    0.374         &                    0.424         &                    0.061\sym{***}&                    0.046         \\
-            &                   (0.47)         &                   (0.27)         &                   (0.28)         &                   (0.15)         &                   (0.27)         &                   (0.44)         &                   (0.02)         &                   (0.03)         \\
-CANO        &                                  &                                  &                                  &                                  &                                  &                                  &                    0.391         &                    0.380         \\
-            &                                  &                                  &                                  &                                  &                                  &                                  &                   (0.21)         &                   (0.31)         \\
-\_cons      &                  171.701\sym{*}  &                  123.901\sym{**} &                  128.151\sym{**} &                   84.284\sym{***}&                  139.110\sym{**} &                  146.143         &                    5.895\sym{**} &                    8.962\sym{*}  \\
-            &                  (81.47)         &                  (45.84)         &                  (49.58)         &                  (24.89)         &                  (46.51)         &                  (75.57)         &                   (1.90)         &                   (3.75)         \\
+CANO                &       1.635&       0.656&       0.527\\
+                    &      (0.33)&      (0.27)&      (0.22)\\
 \hline
-\(N\)       &                     2456         &                     2456         &                     2456         &                     2456         &                     2456         &                     2456         &                     2456         &                     2456         \\
+Observations        &       11136&       11136&       11136\\
+Socioeconomic controls&          No&         Yes&         Yes\\
+fe Place F.E.       &            &            &            \\
 \hline\hline
 \end{tabular}
 }

@@ -20,46 +20,34 @@ if c(username) == "arjunshanmugam" {
 
   // OUTPUT
 	global output_tables "/Users/arjunshanmugam/Documents/GitHub/evictions_education/output/tables"
+	global output_graphs "/Users/arjunshanmugam/Documents/GitHub/evictions_education/output/graphs"
 
   // CODE
   global code "/Users/arjunshanmugam/Documents/GitHub/evictions_education/code"
 
 }
 
-local city_level_kroeger 0
-local district_level 0
-local city_level_final 1
+
+local district_level 1
+local city_level_final 0
 
 if `city_level_final' {
 
 
-	// do ${code}/clean_leaid_fips_crosswalk.do
-	//
- 	// do ${code}/clean_ohioid_leaid_crosswalk.do
-	//
- 	// do ${code}/clean_education_data.do
+	do ${code}/clean_leaid_fips_crosswalk.do
+
+ 	do ${code}/clean_ohioid_leaid_crosswalk.do
+
+ 	do ${code}/clean_education_data.do
 
 	do ${code}/clean_city_level_evictions_CANO_data.do
 
-	do ${code}/merge_to_city_level_final.do
-
-	do ${code}/city_level_analysis.do
-
-}
-
-if `city_level_kroeger' {
-	do ${code}/clean_kroeger_la_mattina.do
-
-	do ${code}/clean_leaid_fips_crosswalk.do
-
-	do ${code}/clean_ohioid_leaid_crosswalk.do
-
-	do ${code}/clean_education_data.do
-
 	do ${code}/merge_to_city_level.do
 
-	do ${code}/city_level_analysis.do
+	// do ${code}/city_level_analysis.do
+
 }
+
 
 if `district_level' {
 	do ${code}/clean_kroeger_la_mattina.do

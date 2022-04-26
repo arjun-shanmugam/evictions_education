@@ -23,7 +23,7 @@ local controls pctrenteroccupied mediangrossrent medianhouseholdincome
 
 
 //
-eststo: xtreg evictionrate CANO pctafam, fe vce(cluster leaid)
+eststo: xtreg evictionrate CANO pctwhite povertyrate pctrenteroccupied, fe vce(cluster leaid)
 // eststo: xtreg evictionfilingrate CANO `controls', fe vce(cluster leaid)
 // esttab using ${output_tables}/first_stage_dl.tex, style(tex) cells(b(star fmt(3)) se(par fmt(2))) replace modelwidth(25)
 //
