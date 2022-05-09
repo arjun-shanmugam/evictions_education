@@ -14,6 +14,7 @@ if c(username) == "arjunshanmugam" {
 	global tract_fips_place_crosswalk "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/geocorr2014_2210407490.csv"
 	global eviction_data "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/OH_tracts.csv"
 	global city_level_eviction_data "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/cities.csv"
+	global shapefile /Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/REFER_CITY
 
   // CLEANED DATA
   global cleaned_data "/Users/arjunshanmugam/Documents/GitHub/evictions_education/cleaned_data"
@@ -28,8 +29,8 @@ if c(username) == "arjunshanmugam" {
 }
 
 
-local district_level 1
-local city_level_final 0
+local district_level 0
+local city_level_final 1
 
 if `city_level_final' {
 
@@ -44,7 +45,9 @@ if `city_level_final' {
 
 	do ${code}/merge_to_city_level.do
 
-	// do ${code}/city_level_analysis.do
+	do ${code}/clean_shapefiles.do
+
+	do ${code}/city_level_analysis.do
 
 }
 

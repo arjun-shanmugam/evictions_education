@@ -28,6 +28,9 @@ merge 1:1 place_fips year using ${cleaned_data}/cleaned_city_level_evictions_dat
 drop if _merge == 1
 // if city not listed as having nuisance ordinance by Mead et al. (2017), assume it has none
 replace CANO = 0 if _merge == 2
+
+
+
 drop _merge
 
 save ${cleaned_data}/cleaned_city_level_evictions_and_CANO_data.dta, replace

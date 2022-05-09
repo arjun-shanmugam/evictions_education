@@ -134,24 +134,19 @@ local to_destring read3 math3 read4 math4
 
 // some observations contain "NC" instead of number
 destring `to_destring', replace force
-foreach var of varlist `to_destring'{
-  drop if  `var' == .
-}
+
 
 // understand which missing values were dropped
-bysort districtirn year: generate year_in_sample = _n
+bysort districtirn: generate year_in_sample = _n
 egen max_year_in_sample = max(year_in_sample), by(districtirn)
 tab max_year_in_sample
 /*
-    max_year_in_sample |      Freq.     Percent        Cum.
+max_year_in |
+    _sample |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          9 |         72        1.21        1.21
-         10 |      5,900       98.79      100.00
+         10 |      6,080      100.00      100.00
 ------------+-----------------------------------
-      Total |      5,972      100.00
-
-      there are 8 schools which are only observed for 9 years
-      otherwise, panel balanced
+      Total |      6,080      100.00
 */
 drop max_year_in_sample
 drop year_in_sample

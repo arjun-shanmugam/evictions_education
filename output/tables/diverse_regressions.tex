@@ -1,0 +1,25 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Heterogeneous Treatment Effects in Diverse City-Years}
+\begin{tabular}{l*{8}{c}}
+\toprule
+                    &\multicolumn{4}{c}{Pct. Proficient in Math}                                            &\multicolumn{4}{c}{Pct. Proficient in Reading}                                         \\\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+                    &\multicolumn{1}{c}{(1)}         &\multicolumn{1}{c}{(2)}         &\multicolumn{1}{c}{(3)}         &\multicolumn{1}{c}{(4)}         &\multicolumn{1}{c}{(5)}         &\multicolumn{1}{c}{(6)}         &\multicolumn{1}{c}{(7)}         &\multicolumn{1}{c}{(8)}         \\
+                    &        b/se         &        b/se         &        b/se         &        b/se         &        b/se         &        b/se         &        b/se         &        b/se         \\
+\midrule
+Eviction rate       &      -0.603\sym{***}&      -0.039         &      -0.128\sym{**} &      -0.128\sym{**} &      -0.536\sym{***}&       0.031         &      -0.065         &      -0.065         \\
+                    &      (0.14)         &      (0.06)         &      (0.04)         &      (0.04)         &      (0.11)         &      (0.05)         &      (0.03)         &      (0.03)         \\
+\midrule
+Observations        &       32701         &       32701         &       32701         &       32701         &       32706         &       32706         &       32706         &       32706         \\
+Number of clusters  &         777         &         777         &         777         &         777         &         777         &         777         &         777         &         777         \\
+$\text{R}^2$        &       0.178         &       0.548         &       0.627         &       0.726         &       0.189         &       0.563         &       0.660         &       0.725         \\
+Socioeconomic controls&         Yes         &         Yes         &         Yes         &         Yes         &         Yes         &         Yes         &         Yes         &         Yes         \\
+Place F.E.          &          No         &         Yes         &         Yes         &         Yes         &          No         &         Yes         &         Yes         &         Yes         \\
+Year F.E.           &          No         &          No         &         Yes         &         Yes         &          No         &          No         &         Yes         &         Yes         \\
+Grade F.E.          &          No         &          No         &          No         &         Yes         &          No         &          No         &          No         &         Yes         \\
+\bottomrule
+\multicolumn{9}{l}{\footnotesize Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading}\\
+\multicolumn{9}{l}{\footnotesize proficiency rates. Regressions are identical to the previous table except that the sample has been restricted}\\
+\multicolumn{9}{l}{\footnotesize to city-years with values of \emph{pct. white} below the 50th percentile.}\\
+\end{tabular}
+\end{table}

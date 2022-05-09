@@ -86,18 +86,36 @@ tab num_cities_spanned_by_district
 
 // equally allocate enrollment across cities spanned by district before collapse
 generate adjusted_enrollment = enrollment / num_cities_spanned_by_district
-drop enrollment
+
 
 // collapse
 drop DistrictName Type districtirn leaid
+preserve  // perform weighted and unweighted collapse separately
 #delimit ;
 local to_collapse read3_ math3_ read4_ math4_ read5_ math5_ read6_ math6_ read7_
                   math7_ read8_ math8_;
 #delimit cr
 collapse (mean) `to_collapse' [aweight=adjusted_enrollment], by(place_fips name_place19 year)
 
+
+
+save ${cleaned_data}/collapse_temp.dta, replace
+restore
+// now, unweighted collapse
+collapse (sum) adjusted_enrollment, by(place_fips name_place19 year)
+merge 1:1 place_fips name_place19 year using ${cleaned_data}/collapse_temp.dta
+/*
+Result                      Number of obs
+-----------------------------------------
+Not matched                             0
+Matched                            12,120  (_merge==3)
+-----------------------------------------
+*/
+drop _merge
+
 // to keep track of where this name variable came from
 rename name_place19 nces_cityname
+rename adjusted_enrollment total_enrollment
 
 merge 1:1 place_fips year using ${cleaned_data}/cleaned_city_level_evictions_and_CANO_data.dta
 /*
