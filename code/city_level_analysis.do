@@ -28,15 +28,14 @@ label variable medianpropertyvalue "\hspace{0.25cm} Median property value"
 
 // define local to store table options
 #delimit ;
-local universal_tableopts cells(b(star fmt(3)) se(par fmt(2))) replace
+local universal_tableopts cells(b(fmt(3)) se(par fmt(2))) replace
                           label;
 // store controls
 local base_controls pctwhite pctrenteroccupied povertyrate medianhouseholdincome
-                    medianpropertyvalue;
+                    medianpropertyvalue num_with_bachelors;
 #delimit cr
-local controls_place_fe `base_controls' i.place_fips
-local controls_place_year_fe `base_controls' i.place_fips i.year
 local controls_place_year_grade_fe `base_controls' i.place_fips i.year i.grade
+
 // drop missing observations and unneeded variables
 egen nmissing = rmiss(pctwhite pctrenteroccupied povertyrate evictionrate)
 drop if nmissing > 0
@@ -170,25 +169,25 @@ local outcomes math read
 eststo clear
 foreach var of varlist `outcomes' {
   // socioeconomic controls, no F.E.
-  eststo: regress `var' evictionrate `base_controls', cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
-  estadd local place_fe "No"
+  eststo: regress `var' evictionrate i.place_fips, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
+  estadd local place_fe "Yes"
   estadd local year_fe "No"
   estadd local grade_fe "No"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE
-  eststo: regress `var' evictionrate `controls_place_fe', cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
-  estadd local place_fe "Yes"
-  estadd local year_fe "No"
-  estadd local grade_fe "No"
-  estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE, year FE
-  eststo: regress `var' evictionrate `controls_place_year_fe', cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
+  eststo: regress `var' evictionrate i.place_fips i.year, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
   estadd local grade_fe "No"
+  estadd scalar districts = e(N_clust)
+  // socioeconomic controls, place FE, year FE
+  eststo: regress `var' evictionrate i.place_fips i.year i.grade, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
+  estadd local place_fe "Yes"
+  estadd local year_fe "Yes"
+  estadd local grade_fe "Yes"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE, year FE, grade FE
   eststo: regress `var' evictionrate `controls_place_year_grade_fe', cluster(place_fips)
@@ -207,10 +206,11 @@ esttab using ${output_tables}/main_regressions.tex,
              eqlabels(none)
              scalars("districts Number of clusters"
                      "r2 $\text{R}^2$"
-                     "socioeconomic_controls Socioeconomic controls"
+
                      "place_fe Place F.E."
                      "year_fe Year F.E."
-                     "grade_fe Grade F.E.")
+                     "grade_fe Grade F.E."
+                     "socioeconomic_controls Socioeconomic controls")
              title("Main Results")
              addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
                       "proficiency rates. Each column represents one regression. All regressions control for \emph{pct. white}, \emph{poverty rate},"
@@ -227,25 +227,25 @@ generate diverse = (pctwhite < fiftieth_percentile)
 eststo clear
 foreach var of varlist `outcomes' {
   // socioeconomic controls, no F.E.
-  eststo: regress `var' evictionrate `base_controls' if diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
-  estadd local place_fe "No"
+  eststo: regress `var' evictionrate i.place_fips if diverse, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
+  estadd local place_fe "Yes"
   estadd local year_fe "No"
   estadd local grade_fe "No"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE
-  eststo: regress `var' evictionrate `controls_place_fe' if diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
-  estadd local place_fe "Yes"
-  estadd local year_fe "No"
-  estadd local grade_fe "No"
-  estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE, year FE
-  eststo: regress `var' evictionrate `controls_place_year_fe' if diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
+  eststo: regress `var' evictionrate i.place_fips i.year if diverse, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
   estadd local grade_fe "No"
+  estadd scalar districts = e(N_clust)
+  // socioeconomic controls, place FE, year FE
+  eststo: regress `var' evictionrate i.place_fips i.year i.grade if diverse, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
+  estadd local place_fe "Yes"
+  estadd local year_fe "Yes"
+  estadd local grade_fe "Yes"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE, year FE, grade FE
   eststo: regress `var' evictionrate `controls_place_year_grade_fe' if diverse, cluster(place_fips)
@@ -264,10 +264,11 @@ esttab using ${output_tables}/diverse_regressions.tex,
              eqlabels(none)
              scalars("districts Number of clusters"
                      "r2 $\text{R}^2$"
-                     "socioeconomic_controls Socioeconomic controls"
+
                      "place_fe Place F.E."
                      "year_fe Year F.E."
-                     "grade_fe Grade F.E.")
+                     "grade_fe Grade F.E."
+                   "socioeconomic_controls Socioeconomic controls")
              title("Heterogeneous Treatment Effects in Diverse City-Years")
              addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
                       "proficiency rates. Regressions are identical to the previous table except that the sample has been restricted"
@@ -283,25 +284,25 @@ scalar fiftieth_percentile = r(p50)
 eststo clear
 foreach var of varlist `outcomes' {
   // socioeconomic controls, no F.E.
-  eststo: regress `var' evictionrate `base_controls' if !diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
-  estadd local place_fe "No"
+  eststo: regress `var' evictionrate i.place_fips if !diverse, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
+  estadd local place_fe "Yes"
   estadd local year_fe "No"
   estadd local grade_fe "No"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE
-  eststo: regress `var' evictionrate `controls_place_fe' if !diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
-  estadd local place_fe "Yes"
-  estadd local year_fe "No"
-  estadd local grade_fe "No"
-  estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE, year FE
-  eststo: regress `var' evictionrate `controls_place_year_fe' if !diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
+  eststo: regress `var' evictionrate i.place_fips i.year if !diverse, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
   estadd local grade_fe "No"
+  estadd scalar districts = e(N_clust)
+  // socioeconomic controls, place FE, year FE
+  eststo: regress `var' evictionrate i.place_fips i.year i.grade if !diverse, cluster(place_fips)
+  estadd local socioeconomic_controls "No"
+  estadd local place_fe "Yes"
+  estadd local year_fe "Yes"
+  estadd local grade_fe "Yes"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE, year FE, grade FE
   eststo: regress `var' evictionrate `controls_place_year_grade_fe' if !diverse, cluster(place_fips)
@@ -320,10 +321,11 @@ esttab using ${output_tables}/non_diverse_regressions.tex,
              eqlabels(none)
              scalars("districts Number of clusters"
                      "r2 $\text{R}^2$"
-                     "socioeconomic_controls Socioeconomic controls"
+
                      "place_fe Place F.E."
                      "year_fe Year F.E."
-                     "grade_fe Grade F.E.")
+                     "grade_fe Grade F.E."
+                   "socioeconomic_controls Socioeconomic controls")
              title("Heterogeneous Treatment Effects in Non-Diverse City-Years")
              addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
                       "proficiency rates. Regressions are identical to the previous table except that the sample has been restricted"

@@ -13,8 +13,10 @@ if c(username) == "arjunshanmugam" {
 	global ohioid_leaid_crosswalk "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/ncesdata_7C561E22.xlsx"
 	global tract_fips_place_crosswalk "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/geocorr2014_2210407490.csv"
 	global eviction_data "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/OH_tracts.csv"
+	global educational_attainment_data_2010 "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/ACSST5Y2010.S1501_data_with_overlays_2022-05-09T143709.csv"
+	global educational_attainment_data_2015 "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/ACSST5Y2015.S1501_data_with_overlays_2022-05-09T170311.csv"
 	global city_level_eviction_data "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/cities.csv"
-	global shapefile /Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/REFER_CITY
+	global shapefile "/Users/arjunshanmugam/Documents/GitHub/evictions_education/raw_data/REFER_CITY"
 
   // CLEANED DATA
   global cleaned_data "/Users/arjunshanmugam/Documents/GitHub/evictions_education/cleaned_data"
@@ -40,6 +42,8 @@ if `city_level_final' {
  	do ${code}/clean_ohioid_leaid_crosswalk.do
 
  	do ${code}/clean_education_data.do
+
+  do ${code}/clean_educational_attainment_data.do
 
 	do ${code}/clean_city_level_evictions_CANO_data.do
 

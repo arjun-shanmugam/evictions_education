@@ -33,4 +33,10 @@ replace CANO = 0 if _merge == 2
 
 drop _merge
 
+
+merge 1:1 place_fips year using ${cleaned_data}/cleaned_educational_attainment_data.dta
+drop if _merge != 3
+generate pct_with_bachelors = 100*(num_with_bachelors / population)
+drop _merge
+
 save ${cleaned_data}/cleaned_city_level_evictions_and_CANO_data.dta, replace
