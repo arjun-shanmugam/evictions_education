@@ -25,6 +25,7 @@ label variable year "\hspace{0.25cm} Year"
 label variable grade "\hspace{0.25cm} Grade year"
 label variable medianhouseholdincome "\hspace{0.25cm} Median household income"
 label variable medianpropertyvalue "\hspace{0.25cm} Median property value"
+label variable pct_with_bachelors "\hspace{0.25cm} Pct. with bachelor's degree"
 
 // define local to store table options
 #delimit ;
@@ -32,7 +33,7 @@ local universal_tableopts cells(b(fmt(3)) se(par fmt(2))) replace
                           label;
 // store controls
 local base_controls pctwhite pctrenteroccupied povertyrate medianhouseholdincome
-                    medianpropertyvalue num_with_bachelors;
+                    medianpropertyvalue pct_with_bachelors;
 #delimit cr
 local controls_place_year_grade_fe `base_controls' i.place_fips i.year i.grade
 
@@ -44,13 +45,13 @@ keep math read `base_controls' place_fips year grade evictionrate population
 // *** summary statistics
 #delimit ;
 estpost tabstat math read evictionrate grade medianhouseholdincome
-                medianpropertyvalue pctrenteroccupied pctwhite povertyrate year,
+                medianpropertyvalue pctrenteroccupied pctwhite pct_with_bachelors povertyrate year,
                 c(stat) stat(mean sd min max n);
 esttab using ${output_tables}/summary_stats.tex,
   replace refcat(math "\emph{Dependent variables}"
                  evictionrate "\vspace{0.1em} \\ \emph{Independent variable of interest}"
                  grade "\vspace{0.1em} \\ \emph{Control variables}", nolabel)
-  cells("mean(fmt(2 2 2 0 2 2 2 2 2 0)) sd min max count(fmt(0))") nomtitle
+  cells("mean(fmt(2 2 2 0 2 2 2 2 2 2 0)) sd min max count(fmt(0))") nomtitle
   noobs label nonumber booktabs
   collabels("Mean" "SD" "Min" "Max" "N") title("Descriptive Statistics")
   addnotes("Note: This table presents descriptive statistics for the sample. Descriptive statistics for \emph{Grade year} and" "\emph{Year} are truncated to have zero decimal places.");
