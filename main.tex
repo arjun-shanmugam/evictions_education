@@ -1,0 +1,123 @@
+\documentclass[12pt]{article}
+
+\usepackage{hyperref, tabularx, booktabs, amssymb,amsmath,amsfonts,eurosym,geometry,ulem,graphicx,caption,color,setspace,sectsty,comment,footmisc,caption,natbib,pdflscape,subfigure,array,hyperref, float}
+
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+\normalem
+
+\onehalfspacing
+
+
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+
+\geometry{left=1.0in,right=1.0in,top=1.0in,bottom=1.0in}
+
+\begin{document}
+
+\begin{titlepage}
+\title{Evictions, Education, and Identification Under Selection}
+\author{Arjun Shanmugam}
+\date{\today}
+\maketitle
+\begin{abstract}
+\noindent I attempt to identify the causal effect of changes in the eviction rate on students' math and reading proficiency rates at the city level. Using data from Ohio and a fixed effects model, I estimate that a 1 percent increase in a city's eviction rate leads to a <> percent decrease in its math proficiency rate. I find negative but insignificant effects on reading proficiency. In racially diverse cities, point estimates are larger in magnitude and more significant. My fixed effects model controls for unobserved confounders that vary solely across cities or solely across time. But if unobserved confounders vary across both of these dimensions, then my estimates may be biased. I evaluate the plausibility of this concern by discussing eviction and its correlate and with an analysis of coefficient and $R^2$ stability when controls are introduced.\\
+
+\bigskip
+\end{abstract}
+\setcounter{page}{0}
+\thispagestyle{empty}
+\end{titlepage}
+\pagebreak \newpage
+
+
+
+
+\doublespacing
+
+
+\section{Introduction} \label{sec:introduction}
+Fueled by stagnating incomes and rising housing costs, an eviction crisis has burdened low-income families in the United States for decades. It is estimated that over half of poor renting families spends over half its income on rent, meaning that unanticipated shocks can force families into homelessness \citep{desmond_evicted:_2017}. At various points beginning in March 2020, the federal government, the Centers for Disease Control, and some state and local governments implemented eviction moratoria, preventing a wave of evictions as pandemic-related lockdowns spread\citep{thrush_federal_2021, goldstein_landlords_2020}. But today, as moratoria expire, eviction rates are creeping up in cities across the country\citep{zaveri_after_2022}. A large body of research has investigated the effect of eviction on adults, but comparatively little evidence exists on how it affects children. If eviction impacts academic performance, then lifetime outcomes could be at stake.
+
+This paper attempts to identify the causal effect of eviction on math and reading proficiency among third through eighth grade students. Ideally, longitudinal microdata would allow me to compare the test scores of children who have experienced eviction with the test scores of those who have not. Lacking this data, I am faced with the choice of conducting my analysis at the school district level or the city level. If eviction reduces test scores, and evicted students tend to move to different districts upon eviction, then an analysis at the school district level might underestimate the true effect of eviction. If students tend to attend school within the same \textit{city} upon being evicted, any change in their academic performance should be visible in city level data. Thus, I aggregate education and eviction data to the city level.
+
+I draw the majority of my data from two sources. The first is The Eviction Lab at Princeton University, which has compiled a database of evicton rates over the 2000s and 2010s in nearly every city in the United States\citep{desmond_eviction_2018}. These data come from formal eviction records held by a number of public and private sector sources \footnote{See \url{https://evictionlab.org/docs/Eviction\%20Lab\%20Methodology\%20Report.pdf} for a detailed description of The Eviction Lab's methodology.} The Eviction Lab also provides ACS 5-year estimates of time-varying socioeconomic characteristics of many of the cities in which it tracks eviction rates, such as the poverty rate and the percent homes which are renter occupied. My second source of data is the Ohio Department of Education, which provides district-level data on the portion of students judged proficient in math and reading from the 2005-06 school year to the 2014-2015 school year. In order to expand my set of controls, I also obtain ACS 5-year estimates of educational attainment at the city level. I build a novel panel dataset of eviction rates, math and reading proficiency scores, and a host of time-varying socioeconomic characteristics at the city-year level.
+
+My biggest econometric challenge is that the treatment I seek to evaluate—eviction—is nonrandom. Partly due to generations of housing policies which sought to systematically exclude African-Americans from home ownership, eviction is strongly correlated with race \citep{rothstein_color_2017}. Eviction is also correlated with income, renter-occupied rates. I address the threat to identification posed by observable confounders with a comprehensive set of controls.
+
+Still, without a random source of variation in eviction rates, it is likely that eviction rates are correlated with unobserved characteristics of cities \footnote{Using \cite{kroeger_nuisance_2020}'s result that nuisance ordinances increase eviction rates, I attempted to instrument eviction rates using the presence of a nuisance ordinance in a city-year. Ultimately, the first-stage was too weak to produce precise instrumental variable estimates; I continue in search of an exogenous source of variation. I present the results of the first-stage regressions in the appendix.}. Using year and city fixed effects, I am able to control for unobserved, city-specific characteristics which are constant over time and unobserved, year-specific characteristics which are constant across cities. But time-variant unobservables—say, changes in landlords' attitudes towards tenants within a single city over time—may still bias my estimates. I do not claim to overcome this threat to identification. However, in section 5, I argue that observed characteristics explain most of the variation in eviction rates and bound the bias in my estimated coefficients following \cite{oster_unobservable_2019}.
+
+I contribute to a wide literature which studies the effects of eviction on important determinants of well being. Evicted mothers are more likely to be depressed; low-income workers are more likely to lose their jobs after being evicted; and at the height of the pandemic, eviction moratoria limited households’ food insecurity and mental stress\citep{desmond_housing_2016, desmond_evictions_2015, an_covid-19_2021}. Less research has focused on the effects of evictions on children. \cite{grigg_school_2012} finds that residence changes negatively affect outcomes such as academic achievement and social development, but evictions are traumatic for children in ways that voluntary moves are not. For this reason, and because education is central to the development of children, I hope to estimate the causal effect of eviction on test scores.
+
+Section 2 discusses in greater depth the data I obtain and the dataset I assemble for my analysis. Section 3 outlines my empirical strategy. Section 4 provides and discusses results, and Section 6 concludes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Data} \label{sec:data}
+
+\section{Empirical Strategy} \label{sec:empirical_strategy}
+
+\section{Results and Discussion} \label{sec:result}
+
+\section{Conclusion} \label{sec:conclusion}
+
+
+
+\singlespacing
+\setlength\bibsep{0pt}
+\bibliographystyle{rusnat}
+\bibliography{citations}
+
+
+
+\clearpage
+
+\onehalfspacing
+
+\section*{Tables} \label{sec:tab}
+\addcontentsline{toc}{section}{Tables}
+\input{output/tables/summary_stats}
+\input{output/tables/main_regressions}
+\input{output/tables/diverse_regressions}
+\input{output/tables/non_diverse_regressions}
+
+
+\clearpage
+
+\section*{Figures} \label{sec:fig}
+\addcontentsline{toc}{section}{Figures}
+
+
+
+\clearpage
+
+\section*{Appendix A. Placeholder} \label{sec:appendixa}
+\addcontentsline{toc}{section}{Appendix A}
+
+
+
+\end{document}
