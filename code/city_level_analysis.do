@@ -11,12 +11,15 @@ local city_level_analysis
 use ${cleaned_data}/final_city_level_dataset.dta, clear
 
 
+rename next_year_math_rate math
+rename next_year_read_rate read
+
 *** setup
 // label variables
 label variable evictionrate "\hspace{0.25cm} Eviction rate"  // independent variable of interest
 label variable CANO "\hspace{0.25cm} Presence of CANO"  // instrument
-label variable math "\hspace{0.25cm} Pct. proficient in math"
-label variable read "\hspace{0.25cm} Pct. proficient in reading"
+label variable math "\hspace{0.25cm} Pct. proficient in math, following year"
+label variable read "\hspace{0.25cm} Pct. proficient in reading, following year"
 label variable name "\hspace{0.25cm} Name of place"
 label variable pctwhite "\hspace{0.25cm} Pct. white"  // socioeconomic_controls
 label variable povertyrate "\hspace{0.25cm} Poverty rate"
