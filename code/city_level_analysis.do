@@ -10,6 +10,8 @@ local city_level_analysis
 
 use ${cleaned_data}/final_city_level_dataset.dta, clear
 
+bysort place_fips grade: generate math2 = math[_n+1]
+bysort place_fips grade: generate read2 = read[_n+1]
 
 *** setup
 // label variables
@@ -43,6 +45,7 @@ drop if nmissing > 0
 keep math read `base_controls' place_fips year grade evictionrate population
 
 // *** summary statistics
+eststo clear
 #delimit ;
 estpost tabstat math read evictionrate grade medianhouseholdincome
                 medianpropertyvalue pctrenteroccupied pctwhite pct_with_bachelors povertyrate year,
@@ -54,10 +57,11 @@ esttab using ${output_tables}/summary_stats.tex,
   cells("mean(fmt(2 2 2 0 2 2 2 2 2 2 0)) sd min max count(fmt(0))") nomtitle
   noobs label nonumber booktabs
   collabels("Mean" "SD" "Min" "Max" "N") title("Descriptive Statistics")
-  addnotes("Note: This table presents descriptive statistics for the sample. Descriptive statistics for \emph{Grade year} and" "\emph{Year} are truncated to have zero decimal places.");
+  addnotes("Note: This table presents descriptive statistics for the sample. Descriptive statistics for \emph{Grade year} and"
+  "\emph{Year} are truncated to have zero decimal places.");
 #delimit cr
 
-
+/*
 // *** binscatter plots
 // relabel to remove latex code
 label variable math "Pct. proficient in math"
@@ -155,7 +159,7 @@ spmap medianhouseholdincome using ${cleaned_data}/ohio_coord.dta, id(id)
 graph combine math_map reading_map eviction_map povertyrate_map pctrenteroccupied_map medianhouseholdincome_map,
   title("Spatial Distribution of Dependent Variables, Treatment, and Select Covariates" "(Cuyahoga County)", size(medium))
   note("Note: These heatmaps present the distributions the dependent variables, treatment, and select covariates"
-       "over observed cities. To produce each map, I first calculate mean values of each variable over the sample"
+       "over observed cities. To produce each map, I first calculate city means of each variable over the sample"
        "period. Then, according to these mean values of each variable, I sort cities into 4 bins of equal sizes. Cities"
        "are then colored according to what bin they fall into.");
 #delimit cr
@@ -332,3 +336,4 @@ esttab using ${output_tables}/non_diverse_regressions.tex,
                       "proficiency rates. Regressions are identical to the previous table except that the sample has been restricted"
                     "to city-years with values of \emph{pct. white} above the 50th percentile.");
 #delimit cr
+*/
