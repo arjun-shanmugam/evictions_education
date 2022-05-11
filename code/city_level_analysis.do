@@ -17,8 +17,8 @@ bysort place_fips grade: generate read2 = read[_n+1]
 // label variables
 label variable evictionrate "\hspace{0.25cm} Eviction rate"  // independent variable of interest
 label variable CANO "\hspace{0.25cm} Presence of CANO"  // instrument
-label variable math "\hspace{0.25cm} Pct. proficient in math, following year"
-label variable read "\hspace{0.25cm} Pct. proficient in reading, following year"
+label variable math "\hspace{0.25cm} Pct. proficient in math"
+label variable read "\hspace{0.25cm} Pct. proficient in reading"
 label variable name "\hspace{0.25cm} Name of place"
 label variable pctwhite "\hspace{0.25cm} Pct. white"  // socioeconomic_controls
 label variable povertyrate "\hspace{0.25cm} Poverty rate"
@@ -58,10 +58,11 @@ esttab using ${output_tables}/summary_stats.tex,
   noobs label nonumber booktabs
   collabels("Mean" "SD" "Min" "Max" "N") title("Descriptive Statistics")
   addnotes("Note: This table presents descriptive statistics for the sample. Descriptive statistics for \emph{Grade year} and"
-  "\emph{Year} are truncated to have zero decimal places.");
+  "\emph{Year} are truncated to have zero decimal places. Values of independent and control variables are from the current year;"
+  "values of dependent variables are from the following year.");
 #delimit cr
 
-/*
+
 // *** binscatter plots
 // relabel to remove latex code
 label variable math "Pct. proficient in math"
@@ -336,4 +337,3 @@ esttab using ${output_tables}/non_diverse_regressions.tex,
                       "proficiency rates. Regressions are identical to the previous table except that the sample has been restricted"
                     "to city-years with values of \emph{pct. white} above the 50th percentile.");
 #delimit cr
-*/
