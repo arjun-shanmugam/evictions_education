@@ -11,9 +11,6 @@ local city_level_analysis
 use ${cleaned_data}/final_city_level_dataset.dta, clear
 
 
-rename next_year_math_rate math
-rename next_year_read_rate read
-
 *** setup
 // label variables
 label variable evictionrate "\hspace{0.25cm} Eviction rate"  // independent variable of interest

@@ -147,14 +147,6 @@ drop evictionfilingrate evictions
 rename *_ *
 reshape long math read, i(place_fips year) j(grade)
 
-rename math math_curr
-rename read read_curr
-
-bysort place_fips grade: generate next_year_math_rate = math_curr[_n+1]
-bysort place_fips grade: generate next_year_read_rate = read_curr[_n+1]
-
-
-
 
 
 save ${cleaned_data}/final_city_level_dataset.dta, replace
