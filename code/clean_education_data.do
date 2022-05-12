@@ -17,7 +17,12 @@ local to_drop_specific *Attendance* *EndofCourse* *Absent* *Science* *SocialStud
 
 // (1) DROP UNNEEDED VARIABLES
 // we will also drop observations where DistrictIRN is blank (3)
-foreach school_year of local school_years {
+forvalues i=1/10 {
+  local school_year : word `i' of `school_years'  // store the current school year
+
+
+
+
   #delimit ;
   // note 1: must manually rename first sheet in 1415_LRC_DISTRICT.xls to "DISTRICT"
   // note 2: must manually rename CityandZipCode to CityandZipcode in 1415_LRC_DISTRICT.xls
@@ -26,7 +31,22 @@ foreach school_year of local school_years {
                                                               clear;
   #delimit cr
 
-  keep `to_keep' *`school_year'*  // variables to keep in all datasets
+  // for every year except first and last two
+  if `i' > 1 & `i' < 9 {
+    scalar prev_index = `i' - 1
+    local prev_index = prev_index
+    local prev_school_year  : word `prev_index' of `school_years'
+    summ MeanACT*`prev_school_year'
+    keep `to_keep' *`school_year'*  MeanACT*`prev_school_year'
+  }
+  else {
+    keep `to_keep' *`school_year'*
+  }
+
+
+   // variables to keep in all datasets
+
+
 
   // so that enrollment is tracked separately for each school year
   rename Enrollment enrollment20`school_year'
@@ -110,7 +130,7 @@ rename *201415* *_15
 // reshape each variable
 #delimit ;
 local stubs read3_ math3_ read4_ math4_ read5_ math5_ read6_ math6_ read7_ math7_ read8_
-            math8_ enrollment_;
+            math8_ enrollment_ meanactscore_ ;
 #delimit cr
 reshape long `stubs', i(districtirn) j(year)
 
@@ -129,7 +149,7 @@ forvalues i=10(1)15 {
 local to_destring read3 math3 read4 math4
                   read5 math5 read6 math6
                   read7 math7 read8 math8
-                  enrollment;
+                  enrollment meanactscore;
 #delimit cr
 
 // some observations contain "NC" instead of number

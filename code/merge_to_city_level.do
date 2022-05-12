@@ -74,7 +74,7 @@ rename fips place_fips
 // reshape back to long so that we can collapse to city-year level weighted by enrollment
 #delimit ;
 local stubs read3_ math3_ read4_ math4_ read5_ math5_ read6_ math6_ read7_ math7_ read8_
-            math8_ enrollment_;
+            math8_ enrollment_ meanactscore_;
 #delimit cr
 reshape long `stubs', i(districtirn place_fips) j(year)
 
@@ -93,7 +93,7 @@ drop DistrictName Type districtirn leaid
 preserve  // perform weighted and unweighted collapse separately
 #delimit ;
 local to_collapse read3_ math3_ read4_ math4_ read5_ math5_ read6_ math6_ read7_
-                  math7_ read8_ math8_;
+                  math7_ read8_ math8_ meanactscore_;
 #delimit cr
 collapse (mean) `to_collapse' [aweight=adjusted_enrollment], by(place_fips name_place19 year)
 
@@ -118,6 +118,8 @@ rename name_place19 nces_cityname
 rename adjusted_enrollment total_enrollment
 
 merge 1:1 place_fips year using ${cleaned_data}/cleaned_city_level_evictions_and_CANO_data.dta
+
+
 /*
 Result                      Number of obs
 -----------------------------------------

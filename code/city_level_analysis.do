@@ -27,7 +27,7 @@ label variable year "\hspace{0.25cm} Year"
 label variable grade "\hspace{0.25cm} Grade year"
 label variable medianhouseholdincome "\hspace{0.25cm} Median household income"
 label variable medianpropertyvalue "\hspace{0.25cm} Median property value"
-label variable pct_with_bachelors "\hspace{0.25cm} Pct. with bachelor's degree"
+
 
 // define local to store table options
 #delimit ;
@@ -35,7 +35,7 @@ local universal_tableopts cells(b(fmt(3)) se(par fmt(2))) replace
                           label;
 // store controls
 local base_controls pctwhite pctrenteroccupied povertyrate medianhouseholdincome
-                    medianpropertyvalue pct_with_bachelors;
+                    medianpropertyvalue;
 #delimit cr
 local controls_place_year_grade_fe `base_controls' i.place_fips i.year i.grade
 
@@ -48,7 +48,7 @@ keep math read `base_controls' place_fips year grade evictionrate population
 eststo clear
 #delimit ;
 estpost tabstat math read evictionrate grade medianhouseholdincome
-                medianpropertyvalue pctrenteroccupied pctwhite pct_with_bachelors povertyrate year,
+                medianpropertyvalue pctrenteroccupied pctwhite povertyrate year,
                 c(stat) stat(mean sd min max n);
 esttab using ${output_tables}/summary_stats.tex,
   replace refcat(math "\emph{Dependent variables}"
@@ -57,9 +57,9 @@ esttab using ${output_tables}/summary_stats.tex,
   cells("mean(fmt(2 2 2 0 2 2 2 2 2 2 0)) sd min max count(fmt(0))") nomtitle
   noobs label nonumber booktabs
   collabels("Mean" "SD" "Min" "Max" "N") title("Descriptive Statistics")
-  addnotes("Note: This table presents descriptive statistics for the sample. Descriptive statistics for \emph{Grade year} and"
-  "\emph{Year} are truncated to have zero decimal places. Values of independent and control variables are from the current year;"
-  "values of dependent variables are from the following year.");
+  addnotes("Note: This table presents descriptive statistics for the sample. Descriptive statistics for \emph{Grade year} and \emph{Year} are "
+  "truncated to have zero decimal places. Values of independent and control variables are from the current year; values"
+  "of dependent variables are from the following year.");
 #delimit cr
 
 
@@ -207,7 +207,7 @@ foreach var of varlist `outcomes' {
 esttab using ${output_tables}/main_regressions.tex,
              `universal_tableopts'
              keep(evictionrate)
-             mgroups("Pct. Proficient in Math" "Pct. Proficient in Reading", pattern(1 0 0 0 1 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
+             mgroups("Pct. proficient in math" "Pct. proficient in reading", pattern(1 0 0 0 1 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
              nomtitles booktabs
              eqlabels(none)
              scalars("districts Number of clusters"
@@ -221,8 +221,88 @@ esttab using ${output_tables}/main_regressions.tex,
              addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
                       "proficiency rates. Each column represents one regression. All regressions control for \emph{pct. white}, \emph{poverty rate},"
                     "\emph{pct. renter occupied}, \emph{median household income}, and \emph{median property value}. Robust standard errors"
-                    "clustered at the city-level.");
+                    "are clustered at the city-level.");
 #delimit cr
+
+
+
+
+*** Heterogeneous Treatment Effects
+local socioeconomic_vars pctwhite medianhouseholdincome medianpropertyvalue povertyrate pctrenteroccupied
+local colors green lavender red orange
+estimates clear
+foreach curr_var of varlist `socioeconomic_vars' {
+
+
+	summarize `curr_var', detail
+	scalar fiftieth_percentile = r(p50)
+ 	// math, above 50th percentile
+	regress math evictionrate `controls_place_year_grade_fe' if `curr_var' > fiftieth_percentile, cluster(place_fips)
+	estimates store m_h_`curr_var'
+	// math, below 50th percentile
+	regress math evictionrate `controls_place_year_grade_fe' if `curr_var' <= fiftieth_percentile, cluster(place_fips)
+	estimates store m_l_`curr_var'
+
+
+	// read, above 50th percentile
+	regress read evictionrate `controls_place_year_grade_fe' if `curr_var' > fiftieth_percentile, cluster(place_fips)
+	estimates store r_h_`curr_var'
+	// read, below 50th percentile
+	regress read evictionrate `controls_place_year_grade_fe' if `curr_var' <= fiftieth_percentile, cluster(place_fips)
+	estimates store r_l_`curr_var'
+
+
+	local math_modelnames `math_modelnames' (m_h_`curr_var', mcolor(red) ciopts(color(red))) (m_l_`curr_var', mcolor(blue) ciopts(color(blue)))
+	local read_modelnames `read_modelnames' (r_h_`curr_var', mcolor(red) ciopts(color(red))) (r_l_`curr_var', mcolor(blue) ciopts(color(blue)))
+
+}
+
+#delimit ;
+coefplot `math_modelnames',
+	keep(evictionrate)
+	asequation
+	swapnames
+	eqrename(m_h_pctwhite = "High pct. white sample"
+			 m_l_pctwhite = "Low pct. white sample"
+			 m_h_medianhouseholdincome = "High median household income sample"
+			 m_l_medianhouseholdincome = "Low median household income sample"
+			 m_h_medianpropertyvalue = "High median property value sample"
+			 m_l_medianpropertyvalue = "Low median property value sample"
+			 m_h_povertyrate = "High poverty rate sample"
+			 m_l_povertyrate = "Low poverty rate sample"
+			 m_h_pctrenteroccupied = "High pct. renter occupied sample"
+			 m_l_pctrenteroccupied = "Low pct. renter occupied sample")
+	ylabel(, labsize(small))
+	yline(2.5 4.5 6.5 8.5, lcolor(black) lpattern(dash))
+	xline(0, lcolor(black))
+	legend(cols(1) order(2 "Regressions on observations above median" 4 "Regressions on observations below median"))
+	title("Heterogeneous Treatment Effects, Math");
+graph export ${output_graphs}/math_heterogeneous_effects.png, replace;
+
+coefplot `read_modelnames',
+	keep(evictionrate)
+	asequation
+	swapnames
+	eqrename(m_h_pctwhite = "High pct. white sample"
+			 m_l_pctwhite = "Low pct. white sample"
+			 m_h_medianhouseholdincome = "High median household income sample"
+			 m_l_medianhouseholdincome = "Low median household income sample"
+			 m_h_medianpropertyvalue = "High median property value sample"
+			 m_l_medianpropertyvalue = "Low median property value sample"
+			 m_h_povertyrate = "High poverty rate sample"
+			 m_l_povertyrate = "Low poverty rate sample"
+			 m_h_pctrenteroccupied = "High pct. renter occupied sample"
+			 m_l_pctrenteroccupied = "Low pct. renter occupied sample")
+	ylabel(, labsize(small))
+	yline(2.5 4.5 6.5 8.5, lcolor(black) lpattern(dash))
+	xline(0, lcolor(black))
+	legend(cols(1) order(2 "Regressions on observations above median" 4 "Regressions on observations below median"))
+	title("Heterogeneous Treatment Effects, Reading");
+graph export ${output_graphs}/read_heterogeneous_effects.png, replace;
+#delimit cr
+
+
+
 
 
 // *** diverse sample
