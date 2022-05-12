@@ -138,7 +138,7 @@ Without exogenous variation in eviction rates, the validity of my estimates as c
 Time-varying confounders pose a still greater threat to my identification strategy. For instance, under the No Child Left Behind Act, low-performing Ohio schools were required to offer free tutoring to parents if they missed "adequate yearly progress" standards set by the Ohio Department of Education \citep{klein_no_2015}. Consider the case of a school which meets this standard during parts of the sample period and does not during others. If such schools exist in my sample, they could confound my estimates of $\beta_{math}$ and $\beta_{read}$.
 
 
-To assess the extent to which these confounders might bias my estimates, I take two approaches. In the first, I regress \emph{pct. proficient in math}, \emph{pct. proficient in reading}, and \emph{eviction rate} separately on my controls. I estimate each regression using four sets of controls and analyze how $R^2$ values change as more controls are added. 
+To assess the extent to which these confounders might bias my estimates, I take two approaches. In the first, I regress \emph{pct. proficient in math}, \emph{pct. proficient in reading}, and \emph{eviction rate} separately on my controls. I estimate each regression using four sets of controls and analyze how $R^2$ values change as more controls are added. The results of this analysis are presented in Table 3.
 
 \textbf{TRY OSTER APPROACH}
 
@@ -172,6 +172,11 @@ If I had perfect data on the number of students from each school district which 
 
 
 \input{output/tables/main_regressions}
+
+\newpage
+\begin{landscape}
+\input{output/tables/predictive_ability_of_controls}
+\end{landscape}
 
 
 \clearpage
