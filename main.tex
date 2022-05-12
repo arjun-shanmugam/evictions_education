@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\usepackage{hyperref, tabularx, booktabs, amssymb,amsmath,amsfonts,eurosym,geometry,ulem,graphicx,caption,color,setspace,sectsty,comment,footmisc,caption,natbib,pdflscape,subfigure,array,hyperref, float}
+\usepackage{hyperref, tabularx, booktabs, amssymb,amsmath,amsfonts,eurosym,geometry,ulem,graphicx,caption,color,setspace,sectsty,comment,footmisc,caption,natbib,pdflscape,subfigure,array,hyperref, float, rotating}
 
 
 \hypersetup{
@@ -27,12 +27,12 @@
 \begin{document}
 
 \begin{titlepage}
-\title{Evictions, Education, and Identification Under Selection}
+\title{Eviction, Education, and Identification Under Selection: Evidence from Ohio}
 \author{Arjun Shanmugam}
 \date{\today}
 \maketitle
 \begin{abstract}
-\noindent I attempt to identify the causal effect of changes in the eviction rate on students' math and reading proficiency rates at the city level. Using data from Ohio and a fixed effects model, I estimate that a 1 percent increase in a city's eviction rate leads to a 0.064 percent decrease in its math proficiency rate. I find negative but insignificant effects on reading proficiency. In racially diverse cities, estimates are larger in magnitude and more significant. My fixed effects model controls for unobserved confounders that vary solely across cities or solely across time. But if unobserved confounders vary across both of these dimensions, then my estimates may be biased. I evaluate the plausibility of this concern by discussing eviction and its correlates and with an analysis of coefficient and $R^2$ stability when controls are introduced.\\
+\noindent I attempt to identify the causal effect of changes in the eviction rate on students' math and reading proficiency rates at the city level. Using data from Ohio and a fixed effects model, I estimate that a 1 percent increase in a city's eviction rate leads to a 0.064 percent decrease in its math proficiency rate. I find negative but insignificant effects on reading proficiency. In racially diverse cities, estimates are larger in magnitude and more significant. My fixed effects model controls for unobserved confounders that vary solely across cities or solely across time. But if unobserved confounders vary across both of these dimensions—which is likely—then my estimates are biased and the true causal effect is lower in magnitude than my findings suggest. I evaluate the plausibility of this concern by discussing eviction and its correlates and with an analysis of coefficient and $R^2$ stability when controls are introduced.\\
 
 \bigskip
 \end{abstract}
@@ -87,19 +87,58 @@ I obtain eviction data from The Eviction Lab, which has collected millions of th
 \subsection{Testing Data}
 I obtain educational testing data from the Ohio Department of Education. The Ohio Department of Education implemented its current testing regime, the Ohio Achievement Assessment (OAA), soon after the passage of the No Child Left Behind Act, which required states to assess 3rd through 8th grade students in reading and math \citep{fox_examination_2014}. In 2010, the educational benchmarks used by the OAA were updated to incorporate the Common Core State Standards—a set of academic standards meant to ensure that all state curricula reached the same level of rigor \citep{ohio_school_boards_association_ohios_2010}.
 
-The Ohio Department of Education has made OAA proficiency rates in math and reading at the school district-grade level available since the 2005-06 school year. I assemble this data into a single, school district-school year level dataset. Assessments are given in the spring, so I denote each school year by the year of its spring term (i.e., the 2005-06 school year is listed as year 2006). Using the National Center for Education Statistics (NCES) geographic relationship files, I match each school district to the city or cities that it intersects with. When a school district spans two cities, I calculate its \textit{adjusted enrollment} by dividing its total enrollment in each year equally across the cities it spans. Then, I aggregate the data to the city-year level. I calculate each city-year's proficiency rate in each subject as the mean of proficiency rates in the school districts spanned by the city, weighted by adjusted enrollment.
+The Ohio Department of Education has made OAA proficiency rates in math and reading at the school district-grade level available since the 2005-06 school year. I assemble this data into a single, school district-school year level dataset. Assessments are given in the spring, so I denote each school year by the year of its spring term (i.e., test scores from the 2005-06 school year are coded as coming from the year 2006). Using the National Center for Education Statistics (NCES) geographic relationship files, I match each school district to the city or cities that it intersects with. When a school district spans two cities, I calculate its \textit{adjusted enrollment} by dividing its total enrollment in each year equally across the cities it spans. Then, I aggregate the data to the city-year level. I calculate each city-year's proficiency rate in each subject as the mean of proficiency rates in the school districts spanned by the city, weighted by adjusted enrollment.
 
 I then merge each city-year from the eviction data with the following city-year from the education data. The OAA is generally administered in May of each year. If I were to match on identical city-years, I would risk attempting to draw a causal link between evictions and perfomance on a standardized test which occurred in the past.
 
 \subsection{Educational Attainment Data}
 Lastly, I obtain ACS five-year estimates of the number of adults in each city in Ohio with a bachelor's degree or higher. In each city-year, I divide this number by the ACS five-year estimate for the city's population in that year. I merge this data on city-years which are identical to those in the eviction data.
 
+\subsection{Descriptive Statistics}
+Table 1 presents descriptive statistics for the sample. Math and reading proficiency rates are about 77 and 83 percent respectively. There is significant variation in both math and proficiency rates as well, with standard deviations of around 13 percent for math and 10 percent for reading.
+
+Important for the precision of my estimates is the fact that there is also a great deal of variation in eviction rates. The standard deviation of eviction rates is about equal to the mean eviction rate in the data. The wide range of  eviction rates—in the city-year with the highest eviction rate, nearly 27 percent of households were evicted—paints a picture of vast inequality in housing security across Ohioan cities.
+
+I also present summary statistics for control variables which I include in my regression model. I discuss later why these controls are important and correlated with both the dependent and independent variables.
+
 
 
 \section{Empirical Strategy} \label{sec:empirical_strategy}
+I first provide correlational evidence of the relationship between eviction and math and reading proficiency rates in Figure 1. Figure 1's plots were generated using the binscatter package in Stata \citep{stepner_binscatter:_2013}. To construct these figures, city-years were sorted by eviction rate and separated into 20 equal sized bins. Then, the mean math and reading proficiency rate was calculated for each bin. Each bin was plotted according to its mean eviction rate on the x-axis and its mean math and reading proficiency rate on the y-axis. Lastly, an OLS-estimated line of best fit was plotted on top of each graph. While these figures do not display causal relationships, they provide evidence of strikingly lower proficiency rates in high eviction areas.  Specifically, a one percent increase in a city-year's eviction rate is associated with a \textbf{FILL} percent decrease in its math proficiency rate and a \textbf{FILL} percent decrease in its reading proficiency rate.
+
+The OLS coefficients estimated to create Figure 1's lines of best fit are biased by observed confounders. Figure 2 displays heatmaps of census-designated cities in Cuyahoga County—the county containing Cleveland. Each heatmap visualizes the values of one variable over the cities of Cuyahoga County. I chose to create heatmaps for the dependent variables, the independent variable of interest, and a select number controls. To create each heatmap, I first calculate the mean value of a single variable over the sample period for each city. Then, I sort each city by its calculated mean. Lastly, I bin cities into four equally sized bins and color each city on the map according to the bin it falls into. Poverty rates and renter occupied rates are positively correlated with eviction rates and negatively correlated with math and reading proficiency. Median household income is negatively correlated with eviction rate and positively correlated with math and reading proficiency rates. My empirical model will need to control for these observed confounders and others.
+
+It is also possible that there are unobserved differences across cities which bias my estimates. For instance, time-invariant cultural differences across cities might affect both proficiency rates and eviction rates. Shocks that affect all cities within a certain year–say, hardship resulting from the Global Financial Crisis, which occurs during the period I study—might also bias my estimates. To control for these phenomena, I must add year and city fixed effects to my model.
+
+I estimate the impact of a one percent change in the eviction rate on outcome variables using the following models
+\begin{equation}
+m_{itg} = \beta_{math} E_{it} + \delta_i + \gamma_t + \phi_g + \chi_{it} + \epsilon_{itg}
+\end{equation}
+\begin{equation}
+r_{itg} = \beta_{read} E_{it} + \delta_i + \gamma_t + \phi_g + \chi_{it} + \epsilon_{itg}
+\end{equation}
+where $m_{itg}$ is the math proficiency rate in city $i$ in year $t$ and grade $g$, $r_{itg}$ is the reading proficiency rate in city $i$ in year $t$ and grade $g$, $E_{it}$ is the eviction rate in  city $i$ during year $t$, $\delta_i$ is a city fixed effect, $\gamma_t$ is a year fixed effect, $\phi_g$ is a grade fixed effect, $\chi_{it}$ represents city-specific, time-varying controls, and $\epsilon_{itg}$ is an error term. I note that $\beta_{math}$ and $\beta_{read}$ are my coefficients of interest.
+
 
 \section{Results and Discussion} \label{sec:result}
+\subsection{Main Results}
+In Table 2, I estimate equations (1) and (2) on my entire sample. Columns (1)-(4) show that after the addition of city and year fixed effects, estimates of $\beta_{math}$ are relatively stable. Column (4) includes city, year, and grade fixed effects along with socioeconomic controls, and is thus my preferred estimate. According to my results, a one percent increase in a city-year's eviction rate is associated with a 0.064 percent decrease in its math proficiency rate. The magnitude of the coefficient is just over two times the standard error; about 66 percent of the variation in math proficiency rates is explained by the independent variables. These results suggest that within cities, even conditional on a set of socioeconomic controls, higher eviction rates are associated with lower mathematics proficiency rates. Columns (5)-(8) show estimates of $\beta_{read}$. While these estimates are also relatively stable, they are largely insignificant. Here, column (8) is my preferred estimate.
+    
+One possible explanation for the fact that estimates of $\beta_{read}$ are less significant than estimates of $\beta_{math}$ is that students' reading perfomance depends less on schooling than students' math performance. <research showing that kids reading ability responds more to what happens at home than math ability>
 
+\subsection{Heterogeneous Treatment Effects}
+Next, I investigate the possibility that the association between eviction rates and proficiency rates may be different for particular subsets of the sample. I calculate a median for each control variable besides grade year and year. Then, I estimate equations (1) and (2) separately on observations above the median and below the median. 
+
+Figure 3 presents the values of $\beta_{math}$ from these regressions. Each point represents the estimate of $\beta_{math}$ in a single regressions. Labels on the y-axis indicate the sample on which equation (1) was estimated. Blue points correspond to estimates on below-median samples, while red points correspond to above-median samples. The key insight of Figure 3 is that in general, $\beta_{math}$ is more negative and more significant in more diverse and socioeconomically distressed areas. Consider the coefficients corresponding to the "High pct. white sample" and the "Low pct. white sample". When estimated on the "Low pct. white sample," $\beta_{math}$ is lower and more significant. One interpretation of these differences is that in more diverse and socioeconomically distressed cities, evicted students have access to weaker support systems, meaning that their academic performance suffers more after a forced move. 
+
+\subsection{Validity of Estimates As Causal}
+
+
+
+-- talk about possibilty that variation is "averaged out" within cities
+    -- include figure showing that coefficients are different in low income vs high income cities
+    -- 1 possibliity: just run the same regressions on poor vs. rich cities
+    -- another possibility: coefplot of coefficient of interest on different percentiles of city wealth
 \section{Conclusion} \label{sec:conclusion}
 
 
@@ -117,7 +156,11 @@ Lastly, I obtain ACS five-year estimates of the number of adults in each city in
 
 \section*{Tables} \label{sec:tab}
 \addcontentsline{toc}{section}{Tables}
+\begin{landscape}
 \input{output/tables/summary_stats}
+\end{landscape}
+
+
 \input{output/tables/main_regressions}
 \input{output/tables/diverse_regressions}
 \input{output/tables/non_diverse_regressions}
@@ -128,9 +171,22 @@ Lastly, I obtain ACS five-year estimates of the number of adults in each city in
 \section*{Figures} \label{sec:fig}
 \addcontentsline{toc}{section}{Figures}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{output/graphs/outcome_binscatter.png}
+    \caption{}
+    \label{fig:my_label}
+\end{figure}
 
+\begin{landscape}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.6]{output/graphs/maps.png}
+    \caption{}
+    \label{fig:my_label}
+\end{figure}
+\end{landscape}
 
-\clearpage
 
 \section*{Appendix A. Placeholder} \label{sec:appendixa}
 first stage results from attempted instrumental variables approach
