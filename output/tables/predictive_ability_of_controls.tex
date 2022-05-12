@@ -7,26 +7,22 @@
                     &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}&\multicolumn{1}{c}{(7)}&\multicolumn{1}{c}{(8)}&\multicolumn{1}{c}{(9)}&\multicolumn{1}{c}{(10)}&\multicolumn{1}{c}{(11)}&\multicolumn{1}{c}{(12)}\\
                     &        b/se&        b/se&        b/se&        b/se&        b/se&        b/se&        b/se&        b/se&        b/se&        b/se&        b/se&        b/se\\
 \midrule
-\hspace{0.25cm} Pct. white&            &            &            &     -11.992&            &            &            &      -5.299&            &            &            &       2.185\\
-                    &            &            &            &         (.)&            &            &            &         (.)&            &            &            &         (.)\\
-\hspace{0.25cm} Pct. renter-occupied&            &            &            &      -8.899&            &            &            &      -4.313&            &            &            &       1.295\\
-                    &            &            &            &         (.)&            &            &            &         (.)&            &            &            &         (.)\\
-\hspace{0.25cm} Poverty rate&            &            &            &       0.000&            &            &            &       0.000&            &            &            &       0.000\\
-                    &            &            &            &         (.)&            &            &            &         (.)&            &            &            &         (.)\\
-\hspace{0.25cm} Median household income&            &            &            &       0.000&            &            &            &       0.000&            &            &            &       0.000\\
-                    &            &            &            &         (.)&            &            &            &         (.)&            &            &            &         (.)\\
-\hspace{0.25cm} Median property value&            &            &            &       0.000&            &            &            &       0.000&            &            &            &       0.000\\
-                    &            &            &            &         (.)&            &            &            &         (.)&            &            &            &         (.)\\
+\hspace{0.25cm} Pct. white&            &       0.057&       0.058&       0.057&            &       0.032&       0.032&       0.032&            &      -0.011&      -0.011&      -0.011\\
+                    &            &      (0.02)&      (0.02)&      (0.02)&            &      (0.02)&      (0.02)&      (0.02)&            &      (0.01)&      (0.01)&      (0.01)\\
+\hspace{0.25cm} Poverty rate&            &            &       0.011&       0.011&            &            &       0.003&       0.003&            &            &       0.008&       0.009\\
+                    &            &            &      (0.01)&      (0.01)&            &            &      (0.01)&      (0.01)&            &            &      (0.00)&      (0.00)\\
+\hspace{0.25cm} Pct. renter-occupied&            &            &            &      -0.001&            &            &            &       0.002&            &            &            &      -0.004\\
+                    &            &            &            &      (0.01)&            &            &            &      (0.01)&            &            &            &      (0.00)\\
 \midrule
-$\mathbf{R^2}$      &\textbf{0.0}&\textbf{0.1}&\textbf{0.8}&\textbf{0.8}&\textbf{0.0}&\textbf{0.2}&\textbf{0.6}&\textbf{0.6}&\textbf{0.0}&\textbf{1.0}&\textbf{1.0}&\textbf{1.0}\\
-Place F.E.          &         Yes&         Yes&         Yes&         Yes&         Yes&         Yes&         Yes&         Yes&         Yes&         Yes&         Yes&         Yes\\
-Year F.E.           &          No&         Yes&         Yes&         Yes&          No&         Yes&         Yes&         Yes&          No&         Yes&         Yes&         Yes\\
-Grade F.E.          &          No&          No&         Yes&         Yes&          No&          No&         Yes&         Yes&          No&          No&         Yes&         Yes\\
-Socioeconomic controls&          No&          No&          No&         Yes&          No&          No&          No&         Yes&          No&          No&          No&         Yes\\
+Observations        &       66873&       66873&       66873&       66873&       66880&       66880&       66880&       66880&       66882&       66882&       66882&       66882\\
+$\mathbf{R^2}$      &\textbf{   0.6593}&\textbf{   0.6595}&\textbf{   0.6595}&\textbf{   0.6595}&\textbf{   0.6602}&\textbf{   0.6603}&\textbf{   0.6603}&\textbf{   0.6603}&\textbf{   0.6267}&\textbf{   0.6270}&\textbf{   0.6272}&\textbf{   0.6273}\\
+Controls for \emph{pct. white}?&          No&         Yes&         Yes&         Yes&          No&         Yes&         Yes&         Yes&          No&         Yes&         Yes&         Yes\\
+\emph{Poverty rate}?&          No&          No&         Yes&         Yes&          No&          No&         Yes&         Yes&          No&          No&         Yes&         Yes\\
+\emph{Pct. renter occupied}?&          No&          No&          No&         Yes&          No&          No&          No&         Yes&          No&          No&          No&         Yes\\
+Number of clusters  &        1189&        1189&        1189&        1189&        1189&        1189&        1189&        1189&        1189&        1189&        1189&        1189\\
 \bottomrule
-\multicolumn{13}{l}{\footnotesize Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading}\\
-\multicolumn{13}{l}{\footnotesize proficiency rates. Each column represents one regression. All regressions control for \emph{pct. white}, \emph{poverty rate},}\\
-\multicolumn{13}{l}{\footnotesize \emph{pct. renter occupied}, \emph{median household income}, and \emph{median property value}. Robust standard errors}\\
-\multicolumn{13}{l}{\footnotesize are clustered at the city-level.}\\
+\multicolumn{13}{l}{\footnotesize Note: This table presents OLS regressions of math proficiency rates, reading proficiency rates, and eviction rates on different combinations of controls.}\\
+\multicolumn{13}{l}{\footnotesize  Each column represents one regression. All regressions include city, year, and grade fixed effects. Robust standard errors are clustered at the city level. }\\
+\multicolumn{13}{l}{\footnotesize For space reasons, I exclude two controls from these estimates; they did not alter $\text{R}^2$ values.}\\
 \end{tabular}
 \end{table}

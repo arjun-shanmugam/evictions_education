@@ -42,9 +42,9 @@ local controls_place_year_grade_fe `base_controls' i.place_fips i.year i.grade
 // drop missing observations and unneeded variables
 egen nmissing = rmiss(pctwhite pctrenteroccupied povertyrate evictionrate)
 drop if nmissing > 0
-keep math read `base_controls' place_fips year grade evictionrate population 
+keep math read `base_controls' place_fips year grade evictionrate population name
 
-
+/*
 // *** summary statistics
 eststo clear
 #delimit ;
@@ -222,7 +222,7 @@ esttab using ${output_tables}/main_regressions.tex,
              addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
                       "proficiency rates. Each column represents one regression. All regressions control for \emph{pct. white}, \emph{poverty rate},"
                     "\emph{pct. renter occupied}, \emph{median household income}, and \emph{median property value}. Robust standard errors"
-                    "are clustered at the city-level.");
+                    "are clustered at the city level.");
 #delimit cr
 
 
@@ -301,43 +301,68 @@ coefplot `read_modelnames',
 	title("Heterogeneous Treatment Effects, Reading");
 graph export ${output_graphs}/read_heterogeneous_effects.png, replace;
 #delimit cr
-
+*/
 *** how much variation is explained by controls?
 local independent_var_and_dependent math read evictionrate
 eststo clear
+
 foreach var of varlist `independent_var_and_dependent' {
-  // socioeconomic controls, no F.E.
-  eststo: regress `var' i.place_fips if name == "Akron", cluster(place_fips)
-  estadd local socioeconomic_controls "No"
-  estadd local place_fe "Yes"
-  estadd local year_fe "No"
-  estadd local grade_fe "No"
-  estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
-  estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE
-  eststo: regress `var' i.place_fips i.year, cluster(place_fips)
-  estadd local socioeconomic_controls "No"
-  estadd local place_fe "Yes"
-  estadd local year_fe "Yes"
-  estadd local grade_fe "No"
-  estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
-  estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE, year FE
+  // all fe controls
   eststo: regress `var' i.place_fips i.year i.grade, cluster(place_fips)
-  estadd local socioeconomic_controls "No"
-  estadd local place_fe "Yes"
-  estadd local year_fe "Yes"
-  estadd local grade_fe "Yes"
-  estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
+  estadd local pct_white "No"
+  estadd local poverty_rate "No"
+  estadd local pct_renter_occupied "No"
+  estadd local median_household_income "No"
+  estadd local median_property_value "No"
+  estadd local bold_r2 "\textbf{`: di %9.4f e(r2)'}"
   estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE, year FE, grade FE
-  eststo: regress `var' `controls_place_year_grade_fe', cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
-  estadd local place_fe "Yes"
-  estadd local year_fe "Yes"
-  estadd local grade_fe "Yes"
-  estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
+  // all fe, pct white
+  eststo: regress `var' pctwhite i.place_fips i.year i.grade, cluster(place_fips)
+  estadd local pct_white "Yes"
+  estadd local poverty_rate "No"
+  estadd local pct_renter_occupied "No"
+  estadd local median_household_income "No"
+  estadd local median_property_value "No"
+  estadd local bold_r2 "\textbf{`: di %9.4f e(r2)'}"
   estadd scalar districts = e(N_clust)
+  // all fe, pct white, poverty rate
+  eststo: regress `var' pctwhite povertyrate i.place_fips i.year i.grade, cluster(place_fips)
+  estadd local pct_white "Yes"
+  estadd local poverty_rate "Yes"
+  estadd local pct_renter_occupied "No"
+  estadd local median_household_income "No"
+  estadd local median_property_value "No"
+  estadd local bold_r2 "\textbf{`: di %9.4f e(r2)'}"
+  estadd scalar districts = e(N_clust)
+  // all fe, pct white, poverty rate, pct renter occupied
+  eststo: regress `var' pctwhite povertyrate pctrenteroccupied i.place_fips i.year i.grade, cluster(place_fips)
+  estadd local pct_white "Yes"
+  estadd local poverty_rate "Yes"
+  estadd local pct_renter_occupied "Yes"
+  estadd local median_household_income "No"
+  estadd local median_property_value "No"
+  estadd local bold_r2 "\textbf{`: di %9.4f e(r2)'}"
+  estadd scalar districts = e(N_clust)
+  // // all fe, pct white, poverty rate, pct renter occupied, median household income
+  // eststo: regress `var' pctwhite povertyrate pctrenteroccupied medianhouseholdincome i.place_fips i.year i.grade, cluster(place_fips)
+  // estadd local pct_white "Yes"
+  // estadd local poverty_rate "Yes"
+  // estadd local pct_renter_occupied "Yes"
+  // estadd local median_household_income "Yes"
+  // estadd local median_property_value "No"
+  // estadd local bold_r2 "\textbf{`: di %9.3f e(r2)'}"
+  // estadd scalar districts = e(N_clust)
+  // // all fe, pct white, poverty rate, pct renter occupied, median household income, median prop value
+  // eststo: regress `var' pctwhite povertyrate pctrenteroccupied medianhouseholdincome medianpropertyvalue i.place_fips i.year i.grade, cluster(place_fips)
+  // estadd local pct_white "Yes"
+  // estadd local poverty_rate "Yes"
+  // estadd local pct_renter_occupied "Yes"
+  // estadd local median_household_income "Yes"
+  // estadd local median_property_value "Yes"
+  // estadd local bold_r2 "\textbf{`: di %9.3f e(r2)'}"
+  // estadd scalar districts = e(N_clust)
+
+
 }
 
 #delimit ;
@@ -346,19 +371,18 @@ esttab using ${output_tables}/predictive_ability_of_controls.tex,
              mgroups("Pct. proficient in math" "Pct. proficient in reading" "Eviction rate", pattern(1 0 0 0 1 0 0 0 1 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
              nomtitles booktabs
              eqlabels(none)
-             keep(`base_controls')
+             keep(pctwhite povertyrate pctrenteroccupied)
              scalars("bold_r2 $\mathbf{R^2}$"
+                     "pct_white Controls for \emph{pct. white}?"
+                     "poverty_rate \emph{Poverty rate}?"
+                     "pct_renter_occupied \emph{Pct. renter occupied}?"
+                     "districts Number of clusters"
 
-
-
-                     "place_fe Place F.E."
-                     "year_fe Year F.E."
-                     "grade_fe Grade F.E."
-                     "socioeconomic_controls Socioeconomic controls")
+                        )
              title("Predictive Ability of Controls")
-             addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
-                      "proficiency rates. Each column represents one regression. All regressions control for \emph{pct. white}, \emph{poverty rate},"
-                    "\emph{pct. renter occupied}, \emph{median household income}, and \emph{median property value}. Robust standard errors"
-                    "are clustered at the city-level.")
-                    noobs;
+             addnotes(
+                      "Note: This table presents OLS regressions of math proficiency rates, reading proficiency rates, and eviction rates on different combinations of controls."
+              " Each column represents one regression. All regressions include city, year, and grade fixed effects. Robust standard errors are clustered at the city level. "
+            "For space reasons, I exclude two controls from these estimates; they did not alter $\text{R}^2$ values.")
+                    ;
 #delimit cr
