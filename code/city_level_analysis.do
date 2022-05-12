@@ -42,7 +42,7 @@ local controls_place_year_grade_fe `base_controls' i.place_fips i.year i.grade
 // drop missing observations and unneeded variables
 egen nmissing = rmiss(pctwhite pctrenteroccupied povertyrate evictionrate)
 drop if nmissing > 0
-keep math read `base_controls' place_fips year grade evictionrate population name
+keep math read `base_controls' place_fips year grade evictionrate population 
 
 
 // *** summary statistics
@@ -315,7 +315,7 @@ foreach var of varlist `independent_var_and_dependent' {
   estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE
-  eststo: regress `var' i.place_fips i.year if name == "Akron", cluster(place_fips)
+  eststo: regress `var' i.place_fips i.year, cluster(place_fips)
   estadd local socioeconomic_controls "No"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
@@ -323,7 +323,7 @@ foreach var of varlist `independent_var_and_dependent' {
   estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE, year FE
-  eststo: regress `var' i.place_fips i.year i.grade if name == "Akron", cluster(place_fips)
+  eststo: regress `var' i.place_fips i.year i.grade, cluster(place_fips)
   estadd local socioeconomic_controls "No"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
@@ -331,7 +331,7 @@ foreach var of varlist `independent_var_and_dependent' {
   estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE, year FE, grade FE
-  eststo: regress `var' `controls_place_year_grade_fe' if name == "Akron", cluster(place_fips)
+  eststo: regress `var' `controls_place_year_grade_fe', cluster(place_fips)
   estadd local socioeconomic_controls "Yes"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
