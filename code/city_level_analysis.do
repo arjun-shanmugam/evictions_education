@@ -42,7 +42,8 @@ local controls_place_year_grade_fe `base_controls' i.place_fips i.year i.grade
 // drop missing observations and unneeded variables
 egen nmissing = rmiss(pctwhite pctrenteroccupied povertyrate evictionrate)
 drop if nmissing > 0
-keep math read `base_controls' place_fips year grade evictionrate population
+keep math read `base_controls' place_fips year grade evictionrate population name
+
 
 // *** summary statistics
 eststo clear
@@ -283,16 +284,16 @@ coefplot `read_modelnames',
 	keep(evictionrate)
 	asequation
 	swapnames
-	eqrename(m_h_pctwhite = "High pct. white sample"
-			 m_l_pctwhite = "Low pct. white sample"
-			 m_h_medianhouseholdincome = "High median household income sample"
-			 m_l_medianhouseholdincome = "Low median household income sample"
-			 m_h_medianpropertyvalue = "High median property value sample"
-			 m_l_medianpropertyvalue = "Low median property value sample"
-			 m_h_povertyrate = "High poverty rate sample"
-			 m_l_povertyrate = "Low poverty rate sample"
-			 m_h_pctrenteroccupied = "High pct. renter occupied sample"
-			 m_l_pctrenteroccupied = "Low pct. renter occupied sample")
+	eqrename(r_h_pctwhite = "High pct. white sample"
+			 r_l_pctwhite = "Low pct. white sample"
+			 r_h_medianhouseholdincome = "High median household income sample"
+			 r_l_medianhouseholdincome = "Low median household income sample"
+			 r_h_medianpropertyvalue = "High median property value sample"
+			 r_l_medianpropertyvalue = "Low median property value sample"
+			 r_h_povertyrate = "High poverty rate sample"
+			 r_l_povertyrate = "Low poverty rate sample"
+			 r_h_pctrenteroccupied = "High pct. renter occupied sample"
+			 r_l_pctrenteroccupied = "Low pct. renter occupied sample")
 	ylabel(, labsize(small))
 	yline(2.5 4.5 6.5 8.5, lcolor(black) lpattern(dash))
 	xline(0, lcolor(black))
@@ -301,119 +302,63 @@ coefplot `read_modelnames',
 graph export ${output_graphs}/read_heterogeneous_effects.png, replace;
 #delimit cr
 
-
-
-
-
-// *** diverse sample
-local outcomes math read
-summarize pctwhite, detail
-scalar fiftieth_percentile = r(p50)
-generate diverse = (pctwhite < fiftieth_percentile)
+*** how much variation is explained by controls?
+local independent_var_and_dependent math read evictionrate
 eststo clear
-foreach var of varlist `outcomes' {
+foreach var of varlist `independent_var_and_dependent' {
   // socioeconomic controls, no F.E.
-  eststo: regress `var' evictionrate i.place_fips if diverse, cluster(place_fips)
+  eststo: regress `var' i.place_fips if name == "Akron", cluster(place_fips)
   estadd local socioeconomic_controls "No"
   estadd local place_fe "Yes"
   estadd local year_fe "No"
   estadd local grade_fe "No"
+  estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE
-  eststo: regress `var' evictionrate i.place_fips i.year if diverse, cluster(place_fips)
+  eststo: regress `var' i.place_fips i.year if name == "Akron", cluster(place_fips)
   estadd local socioeconomic_controls "No"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
   estadd local grade_fe "No"
+  estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE, year FE
-  eststo: regress `var' evictionrate i.place_fips i.year i.grade if diverse, cluster(place_fips)
+  eststo: regress `var' i.place_fips i.year i.grade if name == "Akron", cluster(place_fips)
   estadd local socioeconomic_controls "No"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
   estadd local grade_fe "Yes"
+  estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
   estadd scalar districts = e(N_clust)
   // socioeconomic controls, place FE, year FE, grade FE
-  eststo: regress `var' evictionrate `controls_place_year_grade_fe' if diverse, cluster(place_fips)
+  eststo: regress `var' `controls_place_year_grade_fe' if name == "Akron", cluster(place_fips)
   estadd local socioeconomic_controls "Yes"
   estadd local place_fe "Yes"
   estadd local year_fe "Yes"
   estadd local grade_fe "Yes"
+  estadd local bold_r2 "\textbf{`: di %2.1f e(r2)'}"
   estadd scalar districts = e(N_clust)
 }
+
 #delimit ;
-esttab using ${output_tables}/diverse_regressions.tex,
+esttab using ${output_tables}/predictive_ability_of_controls.tex,
              `universal_tableopts'
-             keep(evictionrate)
-             mgroups("Pct. Proficient in Math" "Pct. Proficient in Reading", pattern(1 0 0 0 1 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
+             mgroups("Pct. proficient in math" "Pct. proficient in reading" "Eviction rate", pattern(1 0 0 0 1 0 0 0 1 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
              nomtitles booktabs
              eqlabels(none)
-             scalars("districts Number of clusters"
-                     "r2 $\text{R}^2$"
+             keep(`base_controls')
+             scalars("bold_r2 $\mathbf{R^2}$"
+
+
 
                      "place_fe Place F.E."
                      "year_fe Year F.E."
                      "grade_fe Grade F.E."
-                   "socioeconomic_controls Socioeconomic controls")
-             title("Heterogeneous Treatment Effects in Diverse City-Years")
+                     "socioeconomic_controls Socioeconomic controls")
+             title("Predictive Ability of Controls")
              addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
-                      "proficiency rates. Regressions are identical to the previous table except that the sample has been restricted"
-                    "to city-years with values of \emph{pct. white} below the 50th percentile.");
-#delimit cr
-
-
-// *** non-diverse sample
-local outcomes math read
-summarize pctwhite, detail
-scalar fiftieth_percentile = r(p50)
-// generate diverse = (pctwhite < fiftieth_percentile)
-eststo clear
-foreach var of varlist `outcomes' {
-  // socioeconomic controls, no F.E.
-  eststo: regress `var' evictionrate i.place_fips if !diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "No"
-  estadd local place_fe "Yes"
-  estadd local year_fe "No"
-  estadd local grade_fe "No"
-  estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE
-  eststo: regress `var' evictionrate i.place_fips i.year if !diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "No"
-  estadd local place_fe "Yes"
-  estadd local year_fe "Yes"
-  estadd local grade_fe "No"
-  estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE, year FE
-  eststo: regress `var' evictionrate i.place_fips i.year i.grade if !diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "No"
-  estadd local place_fe "Yes"
-  estadd local year_fe "Yes"
-  estadd local grade_fe "Yes"
-  estadd scalar districts = e(N_clust)
-  // socioeconomic controls, place FE, year FE, grade FE
-  eststo: regress `var' evictionrate `controls_place_year_grade_fe' if !diverse, cluster(place_fips)
-  estadd local socioeconomic_controls "Yes"
-  estadd local place_fe "Yes"
-  estadd local year_fe "Yes"
-  estadd local grade_fe "Yes"
-  estadd scalar districts = e(N_clust)
-}
-#delimit ;
-esttab using ${output_tables}/non_diverse_regressions.tex,
-             `universal_tableopts'
-             keep(evictionrate)
-             mgroups("Pct. Proficient in Math" "Pct. Proficient in Reading", pattern(1 0 0 0 1 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
-             nomtitles booktabs
-             eqlabels(none)
-             scalars("districts Number of clusters"
-                     "r2 $\text{R}^2$"
-
-                     "place_fe Place F.E."
-                     "year_fe Year F.E."
-                     "grade_fe Grade F.E."
-                   "socioeconomic_controls Socioeconomic controls")
-             title("Heterogeneous Treatment Effects in Non-Diverse City-Years")
-             addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
-                      "proficiency rates. Regressions are identical to the previous table except that the sample has been restricted"
-                    "to city-years with values of \emph{pct. white} above the 50th percentile.");
+                      "proficiency rates. Each column represents one regression. All regressions control for \emph{pct. white}, \emph{poverty rate},"
+                    "\emph{pct. renter occupied}, \emph{median household income}, and \emph{median property value}. Robust standard errors"
+                    "are clustered at the city-level.")
+                    noobs;
 #delimit cr
