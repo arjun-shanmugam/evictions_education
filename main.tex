@@ -85,14 +85,12 @@ Eviction cases in America are usually tried in civil courts at the county-level.
 I obtain eviction data from The Eviction Lab, which has collected millions of the above described records in two ways: first, by sending requests to state and county governments, and second, by purchasing records from two private companies. State and county records are publicly accessible under the Freedom of Information Act; about 12 million records were obtained in this manner. LexisNexis Risk Solutions and American Information Research Services, Inc. provided approximately 67 million and 11 million eviction records respectively. The Eviction Lab geocoded tenant addresses so that they could be linked to U.S. Census-designated cities, then aggregated records to the city-level to protect privacy and calculate eviction rates for each city during almost every year in the 2000s and 2010s. The Eviction Lab also merged socioeconomic variables taken from the American Community Survey's (ACS) 2010 and 2015 five-year estimates: racial composition variables, the percent of households which are renter occupied, poverty rate, median household income, and median property value.
 
 \subsection{Testing Data}
-I obtain educational testing data from the Ohio Department of Education. The Ohio Department of Education implemented its current testing regime, the Ohio Achievement Assessment (OAA), soon after the passage of the No Child Left Behind Act, which required states to assess 3rd through 8th grade students in reading and math \citep{fox_examination_2014}. In 2010, the educational benchmarks used by the OAA were updated to incorporate the Common Core State Standards—a set of academic standards meant to ensure that all state curricula reached the same level of rigor \citep{ohio_school_boards_association_ohios_2010}.
+I obtain educational testing data from the Ohio Department of Education. The Ohio Department of Education implemented its current testing regime, the Ohio Achievement Assessment (OAA), soon after the passage of the No Child Left Behind Act, which required states to assess third through eighth grade students in reading and math \citep{fox_examination_2014}. I note that in  2010, the educational benchmarks used by the OAA were updated to incorporate the Common Core State Standards—a set of academic standards meant to ensure that all state curricula reached the same level of rigor \citep{ohio_school_boards_association_ohios_2010}. Year fixed effects should control for these changes in the way the OAA defined proficiency.
 
 The Ohio Department of Education has made OAA proficiency rates in math and reading at the school district-grade level available since the 2005-06 school year. I assemble this data into a single, school district-school year level dataset. Assessments are given in the spring, so I denote each school year by the year of its spring term (i.e., test scores from the 2005-06 school year are coded as coming from the year 2006). Using the National Center for Education Statistics (NCES) geographic relationship files, I match each school district to the city or cities that it intersects with. When a school district spans two cities, I calculate its \textit{adjusted enrollment} by dividing its total enrollment in each year equally across the cities it spans. Then, I aggregate the data to the city-year level. I calculate each city-year's proficiency rate in each subject as the mean of proficiency rates in the school districts spanned by the city, weighted by adjusted enrollment.
 
-I then merge each city-year from the eviction data with the following city-year from the education data. The OAA is generally administered in May of each year. If I were to match on identical city-years, I would risk attempting to draw a causal link between evictions and perfomance on a standardized test which occurred in the past.
+I then merge each city-year from the eviction data with the following city-year from the education data. The OAA is generally administered in May of each year. If I were to match on identical city-years, I would risk attempting to draw a causal link between evictions and performance on a standardized test which occurred in the past.
 
-\subsection{Educational Attainment Data}
-Lastly, I obtain ACS five-year estimates of the number of adults in each city in Ohio with a bachelor's degree or higher. In each city-year, I divide this number by the ACS five-year estimate for the city's population in that year. I merge this data on city-years which are identical to those in the eviction data.
 
 \subsection{Descriptive Statistics}
 Table 1 presents descriptive statistics for the sample. Math and reading proficiency rates are about 77 and 83 percent respectively. There is significant variation in both math and proficiency rates as well, with standard deviations of around 13 percent for math and 10 percent for reading.
@@ -106,7 +104,7 @@ I also present summary statistics for control variables which I include in my re
 \section{Empirical Strategy} \label{sec:empirical_strategy}
 I first provide correlational evidence of the relationship between eviction and math and reading proficiency rates in Figure 1. Figure 1's plots were generated using the binscatter package in Stata \citep{stepner_binscatter:_2013}. To construct these figures, city-years were sorted by eviction rate and separated into 20 equal sized bins. Then, the mean math and reading proficiency rate was calculated for each bin. Each bin was plotted according to its mean eviction rate on the x-axis and its mean math and reading proficiency rate on the y-axis. Lastly, an OLS-estimated line of best fit was plotted on top of each graph. While these figures do not display causal relationships, they provide evidence of strikingly lower proficiency rates in high eviction areas.  Specifically, a one percent increase in a city-year's eviction rate is associated with a \textbf{FILL} percent decrease in its math proficiency rate and a \textbf{FILL} percent decrease in its reading proficiency rate.
 
-The OLS coefficients estimated to create Figure 1's lines of best fit are biased by observed confounders. Figure 2 displays heatmaps of census-designated cities in Cuyahoga County—the county containing Cleveland. Each heatmap visualizes the values of one variable over the cities of Cuyahoga County. I chose to create heatmaps for the dependent variables, the independent variable of interest, and a select number controls. To create each heatmap, I first calculate the mean value of a single variable over the sample period for each city. Then, I sort each city by its calculated mean. Lastly, I bin cities into four equally sized bins and color each city on the map according to the bin it falls into. Poverty rates and renter occupied rates are positively correlated with eviction rates and negatively correlated with math and reading proficiency. Median household income is negatively correlated with eviction rate and positively correlated with math and reading proficiency rates. My empirical model will need to control for these observed confounders and others.
+The OLS coefficients estimated to create Figure 1's lines of best fit are biased by observed confounders. Figure 2 displays heatmaps of census-designated cities in Cuyahoga County—the county containing Cleveland. Each heatmap visualizes the values of one variable over the cities of Cuyahoga County. I chose to create heatmaps for the dependent variables, the independent variable of interest, and a select number controls. To create each heatmap, I first calculate the mean value of a single variable over the sample period for each city. Then, I sort each city by its calculated mean. Lastly, I bin cities into four equally sized bins and color each city on the map according to the bin it falls into. Poverty rates and renter occupied rates are positively correlated with eviction rates and negatively correlated with math and reading proficiency. Median household income is negatively correlated with eviction rate and positively correlated with math and reading proficiency rates. My empirical model must control for these observed confounders and others.
 
 It is also possible that there are unobserved differences across cities which bias my estimates. For instance, time-invariant cultural differences across cities might affect both proficiency rates and eviction rates. Shocks that affect all cities within a certain year–say, hardship resulting from the Global Financial Crisis, which occurs during the period I study—might also bias my estimates. To control for these phenomena, I must add year and city fixed effects to my model.
 
@@ -131,17 +129,25 @@ Next, I investigate the possibility that the association between eviction rates 
 
 Figure 3 presents the values of $\beta_{math}$ from these regressions. Each point represents the estimate of $\beta_{math}$ in a single regressions. Labels on the y-axis indicate the sample on which equation (1) was estimated. Blue points correspond to estimates on below-median samples, while red points correspond to above-median samples. The key insight of Figure 3 is that in general, $\beta_{math}$ is more negative and more significant in more diverse and socioeconomically distressed areas. Consider the coefficients corresponding to the "High pct. white sample" and the "Low pct. white sample". When estimated on the "Low pct. white sample," $\beta_{math}$ is lower and more significant. One interpretation of these differences is that in more diverse and socioeconomically distressed cities, evicted students have access to weaker support systems, meaning that their academic performance suffers more after a forced move. 
 
-Figure 4 presents heterogeneous treatment effects on reading proficiency rates analagously to Figure 3. In keeping with main results presented in Table 2, the estimated values of $\beta_{read}$ are smaller in magnitude and insignificant than estimated values of $\beta_{math}$. One would expect treatment effects on reading proficiency to be more negative in socioeconomically distressed cities; perhaps children in these cities do not have access to the same literacy-encouraging at-home environments as children in wealthier areas. However, this hypothesis is not supported by Figure 3. 
+Figure 4 presents heterogeneous treatment effects on reading proficiency rates analogously to Figure 3. In keeping with main results presented in Table 2, the estimated values of $\beta_{read}$ are smaller in magnitude and insignificant than estimated values of $\beta_{math}$. One would expect treatment effects on reading proficiency to be more negative in socioeconomically distressed cities; perhaps children in these cities do not have access to the same at-home environments as children in wealthier areas. However, this hypothesis is not supported by Figure 3 as there is no distinguishable trend when socioeconomically distressed areas are compared to non-socioeconomically distressed areas.
 
 \subsection{Validity of Estimates As Causal}
+Without exogenous variation in eviction rates, the validity of my estimates as causal is still in question. I begin by discussing the shortcomings of the controls I include. While these controls explain a large portion of the variation in math and reading proficiency rates, the most obvious shortcoming of my identification strategy is the lack of educational attainment rates as controls. Educated individuals are more likely to be wealthy, making them less likely to be evicted. Educated individuals are also more likely to have the time and resources to navigate the eviction process when faced with eviction filings. And plenty of research shows that parental education is correlated with children's educational outcomes \citep{havemen}. Unfortunately, ACS 5-year estimates are not available for the portion of adults with bachelor's degrees in a large portion of the cities in my sample. Because educational attainment is negatively correlated with eviction and positively correlated with child educational performance, this omission in theory biases my estimates negatively. 
 
 
+Time-varying confounders pose a still greater threat to my identification strategy. For instance, under the No Child Left Behind Act, low-performing Ohio schools were required to offer free tutoring to parents if they missed "adequate yearly progress" standards set by the Ohio Department of Education \citep{klein_no_2015}. Consider the case of a school which meets this standard during parts of the sample period and does not during others. If such schools exist in my sample, they could confound my estimates of $\beta_{math}$ and $\beta_{read}$.
 
--- talk about possibilty that variation is "averaged out" within cities
-    -- include figure showing that coefficients are different in low income vs high income cities
-    -- 1 possibliity: just run the same regressions on poor vs. rich cities
-    -- another possibility: coefplot of coefficient of interest on different percentiles of city wealth
--missing control: educational attainment
+
+To assess the extent to which these confounders might bias my estimates, I take two approaches. In the first, I regress \emph{pct. proficient in math}, \emph{pct. proficient in reading}, and \emph{eviction rate} separately on my controls. I estimate each regression using four sets of controls and analyze how $R^2$ values change as more controls are added. 
+
+\textbf{TRY OSTER APPROACH}
+
+
+My exploration of heterogeneous treatment effects in subsection 4.2 suggests another possibility: that treatment effects are balancing each other out within cities, pushing my estimates towards zero. Because I do not have access to individual-level data, I am forced to rely on city-year averages in my analysis. For an instructive example as to how this might alter my results, consider the city of Akron. Overall, Akron is relatively poor; it ranks in the top 30 of Ohio's highest-poverty cities and its mean eviction rate over the sample period is among the highest of the cities I observe. Akron intersects seven different school districts, including Revere Local School District and Akron Public Schools District. In Revere Local School District, 91.6 percent of students have access to broadband internet and median household income is \$109,173 (NCES District Demographic Dashboard). In Akron Public Schools District, just 77.1 percent do; the median household makes \$38,006 each year. Evicted students in districts such as Revere Local may have access to support systems which allow them to fare better academically than students attending Akron Public Schools. This suggests that the true effect of eviction on proficiency is more negative for an Akron Public Schools student than a Revere Local student. In fact, it is plausible that the true effect of eviction on proficiency for the average Revere Local Schools student is indistinguishable from zero. 
+
+If I had perfect data on the number of students from each school district which reside in each city in each year—and could thus construct a \textit{precise} weighted average of district test scores for each city-year—then this phenomenon would not bias my estimates. But I do not have such data, and so when a district intersects with two or more cities, I am forced to assume that its student body resides evenly across those cities. Revere Local Schools, for example, intersects five cities. If the true portion of Revere Local Schools' students residing in Akron is less than one-fifth, then I am over-weighting the treatment effect in Revere Local Schools' in my calculation of the treatment effect for the city of Akron. If this over-weighting of wealthy school districts' test scores in the calculation of city-year level test scores for poor, high-eviction cities happens systematically in my analysis, then my obtained coefficients are biased upwards.
+
+
 \section{Conclusion} \label{sec:conclusion}
 
 
@@ -157,16 +163,15 @@ Figure 4 presents heterogeneous treatment effects on reading proficiency rates a
 
 \onehalfspacing
 
+
+\begin{landscape}
 \section*{Tables} \label{sec:tab}
 \addcontentsline{toc}{section}{Tables}
-\begin{landscape}
 \input{output/tables/summary_stats}
 \end{landscape}
 
 
 \input{output/tables/main_regressions}
-\input{output/tables/diverse_regressions}
-\input{output/tables/non_diverse_regressions}
 
 
 \clearpage
@@ -176,7 +181,7 @@ Figure 4 presents heterogeneous treatment effects on reading proficiency rates a
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.45]{output/graphs/outcome_binscatter.png}
+    \includegraphics[scale=0.4]{output/graphs/outcome_binscatter.png}
     \caption{}
     \label{fig:my_label}
 \end{figure}
@@ -184,13 +189,30 @@ Figure 4 presents heterogeneous treatment effects on reading proficiency rates a
 \begin{landscape}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.6]{output/graphs/maps.png}
+    \includegraphics[scale=0.5]{output/graphs/maps.png}
     \caption{}
     \label{fig:my_label}
 \end{figure}
 \end{landscape}
 
+\begin{landscape}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{output/graphs/math_heterogeneous_effects.png}
+    \caption{}
+    \label{fig:my_label}
+\end{figure}
+\end{landscape}
 
+\begin{landscape}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{output/graphs/read_heterogeneous_effects.png}
+    \caption{}
+    \label{fig:my_label}
+\end{figure}
+\end{landscape}
 \section*{Appendix A. Placeholder} \label{sec:appendixa}
 
 \addcontentsline{toc}{section}{Appendix A}
