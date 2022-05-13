@@ -44,7 +44,7 @@ egen nmissing = rmiss(pctwhite pctrenteroccupied povertyrate evictionrate)
 drop if nmissing > 0
 keep math read `base_controls' place_fips year grade evictionrate population name
 
-/*
+
 // *** summary statistics
 eststo clear
 #delimit ;
@@ -55,7 +55,7 @@ esttab using ${output_tables}/summary_stats.tex,
   replace refcat(math "\emph{Dependent variables}"
                  evictionrate "\vspace{0.1em} \\ \emph{Independent variable of interest}"
                  grade "\vspace{0.1em} \\ \emph{Control variables}", nolabel)
-  cells("mean(fmt(2 2 2 0 2 2 2 2 2 2 0)) sd min max count(fmt(0))") nomtitle
+  cells("mean(fmt(2 2 2 0 2 2 2 2 2 0)) sd min max count(fmt(0))") nomtitle
   noobs label nonumber booktabs
   collabels("Mean" "SD" "Min" "Max" "N") title("Descriptive Statistics")
   addnotes("Note: This table presents descriptive statistics for the sample. Descriptive statistics for \emph{Grade year} and \emph{Year} are "
@@ -220,9 +220,8 @@ esttab using ${output_tables}/main_regressions.tex,
                      "socioeconomic_controls Socioeconomic controls")
              title("Main Results")
              addnotes("Note: This table presents OLS regression estimates of the effect of \emph{eviction rate} on mathematics and reading"
-                      "proficiency rates. Each column represents one regression. All regressions control for \emph{pct. white}, \emph{poverty rate},"
-                    "\emph{pct. renter occupied}, \emph{median household income}, and \emph{median property value}. Robust standard errors"
-                    "are clustered at the city level.");
+                      "proficiency rates. Each column represents one regression. Robust standard errors are clustered"
+                    "at the city level.");
 #delimit cr
 
 
@@ -301,7 +300,7 @@ coefplot `read_modelnames',
 	title("Heterogeneous Treatment Effects, Reading");
 graph export ${output_graphs}/read_heterogeneous_effects.png, replace;
 #delimit cr
-*/
+
 *** how much variation is explained by controls?
 local independent_var_and_dependent math read evictionrate
 eststo clear
