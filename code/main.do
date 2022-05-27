@@ -37,19 +37,19 @@ local city_level_final 1
 if `city_level_final' {
 
 
-	do ${code}/clean_leaid_fips_crosswalk.do
-
- 	do ${code}/clean_ohioid_leaid_crosswalk.do
-
- 	do ${code}/clean_education_data.do
-
-  do ${code}/clean_educational_attainment_data.do
-
-	do ${code}/clean_city_level_evictions_CANO_data.do
-
-	do ${code}/merge_to_city_level.do
-
-	do ${code}/clean_shapefiles.do
+	// do ${code}/clean_leaid_fips_crosswalk.do
+	//
+ 	// do ${code}/clean_ohioid_leaid_crosswalk.do
+	//
+ 	// do ${code}/clean_education_data.do
+	//
+  // do ${code}/clean_educational_attainment_data.do
+	//
+	// do ${code}/clean_city_level_evictions_CANO_data.do
+	//
+	// do ${code}/merge_to_city_level.do
+	//
+	// do ${code}/clean_shapefiles.do
 
 	do ${code}/city_level_analysis.do
 
